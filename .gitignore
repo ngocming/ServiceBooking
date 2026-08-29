@@ -1,5 +1,43 @@
+# Build output
 bin/
 obj/
+
+# Visual Studio
 .vs/
 *.user
 *.suo
+*.userosscache
+*.sln.docstates
+*.ncrunchproject
+*.DotSettings.user
+
+# Rider
+.idea/
+
+# VS Code
+.vscode/
+
+# Secrets & environment-specific config
+appsettings.Development.json
+appsettings.Local.json
+appsettings.*.local.json
+*.env
+secrets.json
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Logs
+*.log
+logs/
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+
+# Antigravity / AI workspace
+.gemini/
