@@ -14,10 +14,12 @@ namespace ServiceBooking.Api.Services.Implementations;
 public class AuthService : IAuthService
 {
     private readonly AppDbContext _context;
-    
-    public AuthService(AppDbContext context)
+    private readonly IJwtService _jwtService;
+
+    public AuthService(AppDbContext context, IJwtService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
     public async Task<AuthResponseDto?> RegisterAsync(RegisterRequestDto dto)
@@ -43,6 +45,24 @@ public class AuthService : IAuthService
             Username = user.Username,
             Email = user.Email,
             Role = user.Role
+        };
+    }
+    public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+    
+        if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            return null;
+
+        var token = _jwtService.GenerateToken(user);
+
+        return new AuthResponseDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role,
+            Token = token
         };
     }
 }

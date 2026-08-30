@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Mvc;
 using ServiceBooking.Api.DTOs.Providers;
 using ServiceBooking.Api.Services.Interfaces;
 using ServiceBooking.Api.Models;
-
+using Microsoft.AspNetCore.Authorization;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class ProvidersController : ControllerBase
 {
     private readonly IProviderService _providerService;
@@ -36,6 +37,7 @@ public class ProvidersController : ControllerBase
     public async Task<ActionResult<ProviderResponseDto>> Create([FromBody] CreateProviderDto dto)
     {
         var provider = await _providerService.CreateAsync(dto);
+
         if (provider == null)
             return BadRequest("Could not create provider");
         return CreatedAtAction(nameof(GetById), new { id = provider.Id }, provider);

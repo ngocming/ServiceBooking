@@ -5,7 +5,7 @@ using ServiceBooking.Api.Services.Interfaces;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/auth")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
@@ -21,6 +21,14 @@ public class AuthController : ControllerBase
         var user = await _authService.RegisterAsync(dto);
         if (user == null)
             return BadRequest("Could not register user");
+        return Ok(user);
+    }
+    [HttpPost("login")]
+    public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginRequestDto dto)
+    {
+        var user = await _authService.LoginAsync(dto);
+        if (user == null)
+            return BadRequest("Invalid email or password");
         return Ok(user);
     }
 }
