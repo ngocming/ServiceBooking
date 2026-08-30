@@ -21,6 +21,7 @@ public class ProviderService : IProviderService
             .Select(p => new ProviderResponseDto
             {
                 Id = p.Id,
+                UserId = p.UserId,
                 DisplayName = p.DisplayName,
                 Description = p.Description,
                 Phone = p.Phone,
@@ -40,6 +41,7 @@ public class ProviderService : IProviderService
             .Select(p => new ProviderResponseDto
             {
                 Id = p.Id,
+                UserId = p.UserId,
                 DisplayName = p.DisplayName,
                 Description = p.Description,
                 Phone = p.Phone,
@@ -52,10 +54,11 @@ public class ProviderService : IProviderService
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ProviderResponseDto?> CreateAsync(CreateProviderDto dto)
+    public async Task<ProviderResponseDto?> CreateAsync(CreateProviderDto dto, int userId)
     {
         var provider = new Provider
         {
+            UserId = userId,
             DisplayName = dto.DisplayName,
             Description = dto.Description,
             Phone = dto.Phone,
@@ -71,6 +74,7 @@ public class ProviderService : IProviderService
         return new ProviderResponseDto
         {
             Id = provider.Id,
+            UserId = provider.UserId,
             DisplayName = provider.DisplayName,
             Description = provider.Description,
             Phone = provider.Phone,
@@ -101,6 +105,7 @@ public class ProviderService : IProviderService
         return new ProviderResponseDto
         {
             Id = provider.Id,
+            UserId = provider.UserId,
             DisplayName = provider.DisplayName,
             Description = provider.Description,
             Phone = provider.Phone,

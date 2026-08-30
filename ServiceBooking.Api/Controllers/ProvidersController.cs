@@ -3,6 +3,7 @@ using ServiceBooking.Api.DTOs.Providers;
 using ServiceBooking.Api.Services.Interfaces;
 using ServiceBooking.Api.Models;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
@@ -36,7 +37,14 @@ public class ProvidersController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<ProviderResponseDto>> Create([FromBody] CreateProviderDto dto)
     {
-        var provider = await _providerService.CreateAsync(dto);
+        // Assuming you have a way to get the logged-in user's ID, for example from the JWT token
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var provider = await _providerService.CreateAsync(dto, int.Parse(userIdClaim)); // Replace 1 with the actual logged-in user's ID
 
         if (provider == null)
             return BadRequest("Could not create provider");
