@@ -24,6 +24,6 @@ public class Provider
 
     public User User { get; set; } = null!;
 
-    public ICollection<Service> Services { get; set; }
-        = new List<Service>();
+    public ICollection<ProviderService> ProviderService { get; set; }
+        = new List<ProviderService>();
 }

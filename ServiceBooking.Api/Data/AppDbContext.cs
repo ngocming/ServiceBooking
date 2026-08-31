@@ -10,7 +10,7 @@ public class AppDbContext : DbContext
     }
     public DbSet<User> Users { get; set; }
     public DbSet<Provider> Providers { get; set; }
-    public DbSet<Service> Services { get; set; }
+    public DbSet<ProviderService> ProviderServices { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,23 +22,14 @@ public class AppDbContext : DbContext
             .HasForeignKey<Provider>(p => p.UserId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Service>()
+        modelBuilder.Entity<ProviderService>()
             .HasOne(s => s.Provider)
-            .WithMany(p => p.Services)
+            .WithMany(p => p.ProviderService)
             .HasForeignKey(s => s.ProviderId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<Service>()
-            .Property(s => s.Price)
-            .HasPrecision(18, 2);
-
-        modelBuilder.Entity<Service>()
-            .Property(s => s.Name)
-            .HasMaxLength(100); 
-
-        modelBuilder.Entity<Service>()
-            .Property(s => s.Description)
-            .HasMaxLength(500); 
+        modelBuilder.Entity<ProviderService>()
+        .ToTable("ProviderServices");
             
     }
 }

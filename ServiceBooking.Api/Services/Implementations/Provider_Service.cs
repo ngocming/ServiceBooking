@@ -6,11 +6,11 @@ using ServiceBooking.Api.Models;
 
 namespace ServiceBooking.Api.Services.Implementations;
 
-public class ProviderService : IProviderService
+public class Provider_Service : IProviderService
 {
     private readonly AppDbContext _context;
 
-    public ProviderService(AppDbContext context)
+    public Provider_Service(AppDbContext context)
     {
         _context = context;
     }

@@ -1,6 +1,6 @@
 namespace ServiceBooking.Api.Models;
 
-public class Service
+public class ProviderService
 {
     public int Id { get; set; }
 

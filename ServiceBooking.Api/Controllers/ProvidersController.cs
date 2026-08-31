@@ -8,6 +8,7 @@ namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+//[Authorize(Roles = "Provider,Admin")]
 [Authorize]
 public class ProvidersController : ControllerBase
 {
