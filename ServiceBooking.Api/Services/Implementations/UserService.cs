@@ -83,7 +83,10 @@ public class UserService : IUserService
             return null;
         
         user.Username = dto.Username;
-        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        if (!string.IsNullOrWhiteSpace(dto.Password))
+        {
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+        }
         user.Email = dto.Email;
         user.FullName = dto.FullName;
         user.PhoneNumber = dto.PhoneNumber;

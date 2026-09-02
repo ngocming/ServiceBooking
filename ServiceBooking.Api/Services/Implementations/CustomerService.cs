@@ -56,13 +56,22 @@ public class CustomerService : ICustomerService
     }
     public async Task<CustomerResponseDto?> UpdateAsync(int userId, CustomerResponseDto dto)
     {
-        var customer = await _context.Customers.FirstOrDefaultAsync(c => c.UserId == userId);
+        var customer = await _context.Customers
+            .Include(c => c.User)
+            .FirstOrDefaultAsync(c => c.UserId == userId);
         if (customer == null)
         {
             return null; 
         }
 
-        _context.Customers.Update(customer);
+        if (customer.User != null)
+        {
+            if (!string.IsNullOrWhiteSpace(dto.Username))
+                customer.User.Username = dto.Username;
+            if (!string.IsNullOrWhiteSpace(dto.Email))
+                customer.User.Email = dto.Email;
+        }
+
         await _context.SaveChangesAsync();
 
         return await GetMyProfileAsync(userId);

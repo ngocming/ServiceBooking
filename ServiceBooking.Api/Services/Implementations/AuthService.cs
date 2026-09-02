@@ -49,7 +49,7 @@ public class AuthService : IAuthService
     }
     public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email && !u.IsDeleted);
     
         if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             return null;

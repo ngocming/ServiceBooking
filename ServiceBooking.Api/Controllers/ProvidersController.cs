@@ -4,12 +4,11 @@ using ServiceBooking.Api.Services.Interfaces;
 using ServiceBooking.Api.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-//[Authorize(Roles = "Provider,Admin")]
-[Authorize]
 public class ProvidersController : ControllerBase
 {
     private readonly IProviderService _providerService;
@@ -20,6 +19,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public async Task<ActionResult<List<ProviderResponseDto>>> GetAll()
     {
         var providers = await _providerService.GetAllAsync();
@@ -27,6 +27,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<ActionResult<ProviderResponseDto>> GetById(int id)
     {
         var provider = await _providerService.GetByIdAsync(id);
@@ -36,34 +37,66 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<ProviderResponseDto>> Create([FromBody] CreateProviderDto dto)
     {
-        // Assuming you have a way to get the logged-in user's ID, for example from the JWT token
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!int.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized("Invalid User ID.");
         }
 
-        var provider = await _providerService.CreateAsync(dto, int.Parse(userIdClaim)); // Replace 1 with the actual logged-in user's ID
+        var provider = await _providerService.CreateAsync(dto, userId);
 
         if (provider == null)
-            return BadRequest("Could not create provider");
+            return BadRequest("Could not create provider. A provider profile may already exist for this user.");
         return CreatedAtAction(nameof(GetById), new { id = provider.Id }, provider);
     }
 
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<ActionResult<ProviderResponseDto>> Update(int id, [FromBody] UpdateProviderDto dto)
     {
-        var provider = await _providerService.UpdateAsync(id, dto);
-        if (provider == null)
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var existingProvider = await _providerService.GetByIdAsync(id);
+        if (existingProvider == null)
             return NotFound("Provider not found for update");
+
+        if (existingProvider.UserId != userId && userRole != "Admin")
+        {
+            return Forbid("You do not have permission to update this provider profile.");
+        }
+
+        var provider = await _providerService.UpdateAsync(id, dto);
         return Ok(provider);
     }
 
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<ActionResult> Delete(int id)
     {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userRole = User.FindFirstValue(ClaimTypes.Role);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var existingProvider = await _providerService.GetByIdAsync(id);
+        if (existingProvider == null)
+            return NotFound("Provider not found for delete");
+
+        if (existingProvider.UserId != userId && userRole != "Admin")
+        {
+            return Forbid("You do not have permission to delete this provider profile.");
+        }
+
         var result = await _providerService.DeleteAsync(id);
         if (!result)
             return NotFound("Provider not found for delete");

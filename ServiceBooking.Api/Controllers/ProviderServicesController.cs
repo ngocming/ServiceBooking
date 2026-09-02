@@ -40,6 +40,7 @@ public class ProviderServicesController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<ProviderServiceResponseDto>> Create([FromBody] CreateProviderServiceDto dto)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -55,13 +56,19 @@ public class ProviderServicesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = providerService.Id }, providerService);
     }
 
-
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(int id, [FromQuery] int providerId)
+    [Authorize]
+    public async Task<ActionResult> Delete(int id)
     {
-        var result = await _providerService.DeleteAsync(providerId, id);
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var result = await _providerService.DeleteAsync(userId, id);
         if (!result)
-            return NotFound("Provider service not found for delete");
+            return NotFound("Provider service not found or you do not have permission to delete it.");
         return NoContent();
     }
 }

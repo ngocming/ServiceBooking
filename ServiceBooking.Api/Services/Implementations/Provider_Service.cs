@@ -56,6 +56,12 @@ public class Provider_Service : IProviderService
 
     public async Task<ProviderResponseDto?> CreateAsync(CreateProviderDto dto, int userId)
     {
+        var existingProvider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
+        if (existingProvider != null)
+        {
+            return null; 
+        }
+
         var provider = new Provider
         {
             UserId = userId,
