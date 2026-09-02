@@ -18,6 +18,7 @@ public class UserService : IUserService
     public async Task<List<UserResponseDto>> GetAllAsync()
     {
         return await _context.Users
+            .Where(u => !u.IsDeleted)
             .Select(u => new UserResponseDto
             {
                 Id = u.Id,
@@ -34,7 +35,7 @@ public class UserService : IUserService
     public async Task<UserResponseDto?> GetByIdAsync(int id)
     {
         return await _context.Users
-            .Where(u => u.Id == id)
+            .Where(u => u.Id == id && !u.IsDeleted)
             .Select(u => new UserResponseDto
             {
                 Id = u.Id,
@@ -54,7 +55,7 @@ public class UserService : IUserService
         {
             Username = dto.Username,
             Email = dto.Email,
-            PasswordHash = dto.Password,
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
             FullName = dto.FullName,
             PhoneNumber = dto.PhoneNumber,
             Role = dto.Role
@@ -82,7 +83,7 @@ public class UserService : IUserService
             return null;
         
         user.Username = dto.Username;
-        user.PasswordHash = dto.Password;
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
         user.Email = dto.Email;
         user.FullName = dto.FullName;
         user.PhoneNumber = dto.PhoneNumber;
@@ -108,7 +109,9 @@ public class UserService : IUserService
         if (user == null)
             return false;
         
-        _context.Users.Remove(user);
+        
+        user.IsDeleted = true;
+        _context.Users.Update(user);
         await _context.SaveChangesAsync();
         
         return true;

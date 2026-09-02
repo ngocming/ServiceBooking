@@ -1,13 +1,11 @@
-namespace ServiceBooking.Api.DTOs.User;
+namespace ServiceBooking.Api.DTOs.Customers;
 
-public class UserResponseDto
+public class CustomerResponseDto
 {
     public int Id { get; set; }
+    public int UserId { get; set; }
     public required string Username { get; set; }
     public required string Email { get; set; }
-    public string? FullName { get; set; }
-    public string? PhoneNumber { get; set; }
-    public required string Role { get; set; }
     public bool IsDeleted { get; set; }
     public DateTime CreatedAt { get; set; }
 }
