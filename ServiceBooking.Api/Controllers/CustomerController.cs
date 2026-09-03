@@ -7,7 +7,7 @@ using ServiceBooking.Api.Services.Interfaces;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/customers")]
+[Route("api/customer")]
 [Authorize]
 public class CustomerController : ControllerBase
 {
@@ -61,5 +61,13 @@ public class CustomerController : ControllerBase
         if (updatedCustomer == null)
             return NotFound("Customer profile not found");
         return Ok(updatedCustomer);
+    }
+
+    [HttpGet]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<List<CustomerResponseDto>>> GetAll()
+    {
+        var customers = await _customerService.GetAllAsync();
+        return Ok(customers);
     }
 }

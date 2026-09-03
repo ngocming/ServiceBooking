@@ -13,4 +13,5 @@ public interface ICustomerService
     Task<CustomerResponseDto?>
         UpdateAsync(int userId, CustomerResponseDto dto);
     
+    Task<List<CustomerResponseDto>> GetAllAsync();
 }

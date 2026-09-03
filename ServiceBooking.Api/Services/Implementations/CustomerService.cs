@@ -76,4 +76,19 @@ public class CustomerService : ICustomerService
 
         return await GetMyProfileAsync(userId);
     }
+
+    public async Task<List<CustomerResponseDto>> GetAllAsync()
+    {
+        return await _context.Customers
+            .Select(c => new CustomerResponseDto
+            {
+                Id = c.Id,
+                UserId = c.UserId,
+                Username = c.User.Username,
+                Email = c.User.Email,
+                IsDeleted = c.User.IsDeleted,
+                CreatedAt = c.CreatedAt
+            })
+            .ToListAsync();
+    }
 }

@@ -6,8 +6,8 @@ using ServiceBooking.Api.Services.Interfaces;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
-[Authorize]
+[Route("api/user")]
+[Authorize(Roles = "Admin")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
