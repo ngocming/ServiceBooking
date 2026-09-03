@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
     public DbSet<Customer> Customers { get; set; }
     public DbSet<ProviderService> ProviderServices { get; set; }
 
+    public DbSet<Booking> Bookings { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -21,7 +23,7 @@ public class AppDbContext : DbContext
             .HasOne(u => u.Provider)
             .WithOne(p => p.User)
             .HasForeignKey<Provider>(p => p.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
         
         modelBuilder.Entity<User>()
             .HasIndex(u => u.Username)
@@ -35,7 +37,7 @@ public class AppDbContext : DbContext
             .HasOne(s => s.Provider)
             .WithMany(p => p.ProviderService)
             .HasForeignKey(s => s.ProviderId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<ProviderService>()
             .ToTable("ProviderServices")
@@ -46,7 +48,7 @@ public class AppDbContext : DbContext
             .HasOne(c => c.User)
             .WithOne(u => u.Customer)
             .HasForeignKey<Customer>(c => c.UserId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Customer>()
             .HasIndex(c => c.UserId)
@@ -56,5 +58,16 @@ public class AppDbContext : DbContext
             .HasIndex(p => p.UserId)
             .IsUnique();
             
+        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.Customer)
+            .WithMany()
+            .HasForeignKey(b => b.CustomerId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Booking>()
+            .HasOne(b => b.ProviderService)
+            .WithMany()
+            .HasForeignKey(b => b.ProviderServiceId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
