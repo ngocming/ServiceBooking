@@ -11,29 +11,29 @@ namespace ServiceBooking.Api.Controllers;
 [Route("api/provider-services")]
 public class ProviderServicesController : ControllerBase
 {
-    private readonly IProviderService_OS _providerService;
+    private readonly IProviderServiceOfferingService _providerServiceOfferingService;
 
-    public ProviderServicesController(IProviderService_OS providerService)
+    public ProviderServicesController(IProviderServiceOfferingService providerServiceOfferingService)
     {
-        _providerService = providerService;
+        _providerServiceOfferingService = providerServiceOfferingService;
     }
     [HttpGet("provider/{providerId}")]
     public async Task<ActionResult<List<ProviderServiceResponseDto>>> GetByProviderId(int providerId)
     {
-        var providerServices = await _providerService.GetByProviderIdAsync(providerId);
+        var providerServices = await _providerServiceOfferingService.GetByProviderIdAsync(providerId);
         return Ok(providerServices);
     }
     [HttpGet]
     public async Task<ActionResult<List<ProviderServiceResponseDto>>> GetAll()
     {
-        var providerServices = await _providerService.GetAllAsync();
+        var providerServices = await _providerServiceOfferingService.GetAllAsync();
         return Ok(providerServices);
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<ProviderServiceResponseDto>> GetById(int id)
     {
-        var providerService = await _providerService.GetByIdAsync(id);
+        var providerService = await _providerServiceOfferingService.GetByIdAsync(id);
         if (providerService == null)
             return NotFound("Provider service not found");
         return Ok(providerService);
@@ -49,7 +49,7 @@ public class ProviderServicesController : ControllerBase
             return Unauthorized("Invalid User ID.");
         }
 
-        var providerService = await _providerService.CreateAsync(dto, userId);
+        var providerService = await _providerServiceOfferingService.CreateAsync(dto, userId);
 
         if (providerService == null)
             return BadRequest("Could not create provider service");
@@ -66,7 +66,7 @@ public class ProviderServicesController : ControllerBase
             return Unauthorized("Invalid User ID.");
         }
 
-        var result = await _providerService.DeleteAsync(userId, id);
+        var result = await _providerServiceOfferingService.DeleteAsync(userId, id);
         if (!result)
             return NotFound("Provider service not found or you do not have permission to delete it.");
         return NoContent();

@@ -6,17 +6,24 @@ public class Booking
 
     public int CustomerId { get; set; }
 
+    public int ProviderId { get; set; }
+
     public int ProviderServiceId { get; set; }
 
     public DateTime BookingDate { get; set; }
-    public string PickupLocation { get; set; } = string.Empty;
-    public string Destination { get; set; } = string.Empty;
 
-    public string Status { get; set; } = "Pending";// Pending, Confirmed, Completed, Cancelled
+    public BookingStatus Status { get; set; } = BookingStatus.Pending;
+
+    public string? Note { get; set; }
+
+    public decimal TotalPrice { get; set; }
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    // Navigation properties
     public Customer Customer { get; set; } = null!;
+
+    public Provider Provider { get; set; } = null!;
 
     public ProviderService ProviderService { get; set; } = null!;
 }

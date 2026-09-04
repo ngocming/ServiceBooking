@@ -5,11 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using ServiceBooking.Api.Models;
 
 namespace ServiceBooking.Api.Services.Implementations;
-public class ProviderService_OS : IProviderService_OS
+
+public class ProviderServiceOfferingService : IProviderServiceOfferingService
 {
     private readonly AppDbContext _context;
 
-    public ProviderService_OS(AppDbContext context)
+    public ProviderServiceOfferingService(AppDbContext context)
     {
         _context = context;
     }
@@ -25,11 +26,12 @@ public class ProviderService_OS : IProviderService_OS
                 Name = pso.Name,
                 Description = pso.Description,
                 Price = pso.Price,
-                DurationInMinutes = pso.DurationMinutes,
+                DurationMinutes = pso.DurationMinutes,
                 CreatedAt = pso.CreatedAt
             })
             .ToListAsync();
     }
+
     public async Task<ProviderServiceResponseDto?> GetByIdAsync(int id)
     {
         return await _context.ProviderServices
@@ -41,11 +43,12 @@ public class ProviderService_OS : IProviderService_OS
                 Name = pso.Name,
                 Description = pso.Description,
                 Price = pso.Price,
-                DurationInMinutes = pso.DurationMinutes,
+                DurationMinutes = pso.DurationMinutes,
                 CreatedAt = pso.CreatedAt
             })
             .FirstOrDefaultAsync();
     }
+
     public async Task<ProviderServiceResponseDto?> CreateAsync(CreateProviderServiceDto dto, int userId)
     {
         var provider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
@@ -53,7 +56,7 @@ public class ProviderService_OS : IProviderService_OS
         {
             return null;
         }
-        var providerService = new ProviderService
+        var providerService = new ServiceBooking.Api.Models.ProviderService
         {
             ProviderId = provider.Id,
             Name = dto.Name,
@@ -72,18 +75,19 @@ public class ProviderService_OS : IProviderService_OS
             Name = providerService.Name,
             Description = providerService.Description,
             Price = providerService.Price,
-            DurationInMinutes = providerService.DurationMinutes,
+            DurationMinutes = providerService.DurationMinutes,
             CreatedAt = providerService.CreatedAt
         };
     }
-    public async Task<bool> DeleteAsync(int userId, int pso_id)
+
+    public async Task<bool> DeleteAsync(int userId, int id)
     {
         var provider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
         if (provider == null)
         {
             return false;
         }
-        var serviceOffering = await _context.ProviderServices.FirstOrDefaultAsync(pso => pso.Id == pso_id && pso.ProviderId == provider.Id);
+        var serviceOffering = await _context.ProviderServices.FirstOrDefaultAsync(pso => pso.Id == id && pso.ProviderId == provider.Id);
         if (serviceOffering == null)
         {
             return false;
@@ -94,6 +98,7 @@ public class ProviderService_OS : IProviderService_OS
 
         return true;
     }
+
     public async Task<List<ProviderServiceResponseDto>?> GetAllAsync()
     {
         var providerServices = await _context.ProviderServices.ToListAsync();
@@ -108,7 +113,7 @@ public class ProviderService_OS : IProviderService_OS
             Name = pso.Name,
             Description = pso.Description,
             Price = pso.Price,
-            DurationInMinutes = pso.DurationMinutes,
+            DurationMinutes = pso.DurationMinutes,
             CreatedAt = pso.CreatedAt
         }).ToList();
         return providerServiceDtos;

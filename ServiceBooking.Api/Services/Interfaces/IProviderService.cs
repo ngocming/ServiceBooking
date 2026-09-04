@@ -10,9 +10,7 @@ public interface IProviderService
 
     Task<ProviderResponseDto?> CreateAsync(CreateProviderDto dto, int userId);
 
-    Task<ProviderResponseDto?> UpdateAsync(
-        int id,
-        UpdateProviderDto dto);
+    Task<ProviderResponseDto?> UpdateAsync(int id, UpdateProviderDto dto);
 
     Task<bool> DeleteAsync(int id);
 }

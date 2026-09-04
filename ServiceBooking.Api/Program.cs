@@ -37,12 +37,13 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register services
-builder.Services.AddScoped<IProviderService, Provider_Service>();
+builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
-builder.Services.AddScoped<IProviderService_OS, ProviderService_OS>();
+builder.Services.AddScoped<IProviderServiceOfferingService, ProviderServiceOfferingService>();
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 var jwtSettings = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(options =>

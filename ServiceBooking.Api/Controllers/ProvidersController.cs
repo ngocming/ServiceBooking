@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/provider")]
+[Route("api/providers")]
 public class ProvidersController : ControllerBase
 {
     private readonly IProviderService _providerService;

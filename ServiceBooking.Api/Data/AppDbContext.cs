@@ -35,7 +35,7 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<ProviderService>()
             .HasOne(s => s.Provider)
-            .WithMany(p => p.ProviderService)
+            .WithMany(p => p.ProviderServices)
             .HasForeignKey(s => s.ProviderId)
             .OnDelete(DeleteBehavior.Restrict);
 

@@ -54,7 +54,7 @@ public class CustomerService : ICustomerService
 
         return await GetMyProfileAsync(userId);
     }
-    public async Task<CustomerResponseDto?> UpdateAsync(int userId, CustomerResponseDto dto)
+    public async Task<CustomerResponseDto?> UpdateAsync(int userId, UpdateCustomerDto dto)
     {
         var customer = await _context.Customers
             .Include(c => c.User)

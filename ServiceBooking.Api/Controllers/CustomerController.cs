@@ -7,7 +7,7 @@ using ServiceBooking.Api.Services.Interfaces;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/customer")]
+[Route("api/customers")]
 [Authorize]
 public class CustomerController : ControllerBase
 {
@@ -51,7 +51,7 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPut("update")]
-    public async Task<ActionResult<CustomerResponseDto>> Update([FromBody] CustomerResponseDto dto)
+    public async Task<ActionResult<CustomerResponseDto>> Update([FromBody] UpdateCustomerDto dto)
     {
         var userId = GetCurrentUserId();
         if (userId <= 0)
