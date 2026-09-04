@@ -77,7 +77,8 @@ public class BookingService : IBookingService
         var bookings = await _dbContext.Bookings
             .Where(b => b.CustomerId == customer.Id)
             .Include(b => b.ProviderService)
-            .ThenInclude(ps => ps.Provider)
+            .Include(b => b.Provider)
+                .ThenInclude(p => p.User)
             .ToListAsync();
 
         return bookings.Select(b => new BookingResponseDto
@@ -86,8 +87,8 @@ public class BookingService : IBookingService
             CustomerId = b.CustomerId,
             ProviderId = b.ProviderId,
             ProviderServiceId = b.ProviderServiceId,
-            ServiceName = b.ProviderService.Name,
-            ProviderName = b.Provider.User.Username,
+            ServiceName = b.ProviderService?.Name ?? string.Empty,
+            ProviderName = b.Provider?.User?.Username ?? b.Provider?.DisplayName ?? string.Empty,
             BookingDate = b.BookingDate,
             Note = b.Note,
             Status = b.Status.ToString(),
