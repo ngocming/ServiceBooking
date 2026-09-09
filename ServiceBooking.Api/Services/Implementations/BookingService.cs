@@ -104,6 +104,28 @@ public class BookingService : IBookingService
 
         return bookings.Select(MapToDto);
     }
+    public async Task<IEnumerable<BookingResponseDto>>
+    GetProviderBookingsAsync(int userId)
+    {
+        var provider = await _dbContext.Providers
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (provider == null)
+        {
+            throw new KeyNotFoundException(
+                "Provider not found.");
+        }
+
+        var bookings = await _dbContext.Bookings
+            .Where(b => b.ProviderId == provider.Id)
+            .Include(b => b.ProviderService)
+            .Include(b => b.Customer)
+                .ThenInclude(c => c.User)
+            .OrderByDescending(b => b.BookingDate)
+            .ToListAsync();
+
+        return bookings.Select(MapToDto);
+    }
 
     public async Task<BookingResponseDto?> GetByIdAsync(
         int userId,

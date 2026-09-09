@@ -215,4 +215,27 @@ public class BookingController : ControllerBase
             return Conflict(ex.Message);
         }
     }
+    [HttpGet("Provider")]
+    public async Task<ActionResult<IEnumerable<BookingResponseDto>>>
+        GetProviderBookings()
+    {
+        var userId = GetCurrentUserId();
+
+        if (userId <= 0)
+        {
+            return Unauthorized("Invalid user token.");
+        }
+
+        try
+        {
+            var bookings =
+                await _bookingService.GetProviderBookingsAsync(userId);
+
+            return Ok(bookings);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
 }

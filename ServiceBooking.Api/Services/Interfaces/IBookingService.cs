@@ -26,4 +26,7 @@ public interface IBookingService
     Task CompleteAsync(
         int userId,
         int bookingId);
+
+    Task<IEnumerable<BookingResponseDto>> GetProviderBookingsAsync(
+    int userId);
 }
