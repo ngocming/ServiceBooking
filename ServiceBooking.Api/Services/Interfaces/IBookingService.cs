@@ -10,4 +10,20 @@ public interface IBookingService
 
     Task<IEnumerable<BookingResponseDto>> GetCustomerBookingsAsync(
         int userId);
+
+    Task<BookingResponseDto?> GetByIdAsync(
+        int userId,
+        int bookingId);
+
+    Task CancelAsync(
+        int userId,
+        int bookingId);
+
+    Task ConfirmAsync(
+        int userId,
+        int bookingId);
+
+    Task CompleteAsync(
+        int userId,
+        int bookingId);
 }
