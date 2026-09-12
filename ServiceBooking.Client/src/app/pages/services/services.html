@@ -1,0 +1,15 @@
+<h1>Danh sách dịch vụ</h1>
+
+@for (service of services; track service.id) {
+
+  <div>
+    <h2>{{ service.name }}</h2>
+
+    <p>Giá: {{ service.price }} VNĐ</p>
+
+    <p>Provider: {{ service.provider }}</p>
+
+    <button>Đặt lịch</button>
+  </div>
+
+}
