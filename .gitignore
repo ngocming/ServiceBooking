@@ -39,5 +39,22 @@ logs/
 *.snupkg
 .nuget/
 
-# Antigravity / AI workspace
+# Frontend (Node / Angular)
+node_modules/
+dist/
+.angular/
+out-tsc/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# AI Assistant files & folders
 .gemini/
+.cursor/
+.cursorrules
+.claude/
+.copilot/
+.ai/
+AGENTS.md
+CLAUDE.md

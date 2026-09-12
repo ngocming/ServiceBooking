@@ -155,17 +155,17 @@ ServiceBooking/
 
 ### 1. Cấu hình backend
 
-Tạo `ServiceBooking.Api/appsettings.Development.json` hoặc dùng environment variables để cấu hình connection string và JWT.
+Tạo `ServiceBooking.Api/appsettings.json` hoặc dùng environment variables để cấu hình connection string và JWT.
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=(localdb)\\MSSQLLocalDB;Database=ServiceBookingDb;Trusted_Connection=True;TrustServerCertificate=True"
+    "DefaultConnection": "<SET IN appsettings.Development.json OR ENVIRONMENT VARIABLE>"
   },
   "JWT": {
-    "Key": "CHANGE_ME_TO_A_LONG_SECRET_KEY_FOR_LOCAL_DEVELOPMENT",
-    "Issuer": "ServiceBooking.Api",
-    "Audience": "ServiceBooking.Client",
+    "Key": "<SET IN appsettings.Development.json OR ENVIRONMENT VARIABLE>",
+    "Issuer": "<SET IN appsettings.Development.json OR ENVIRONMENT VARIABLE>",
+    "Audience": "<SET IN appsettings.Development.json OR ENVIRONMENT VARIABLE>",
     "ExpirationInMinutes": 60
   }
 }
