@@ -1,0 +1,42 @@
+<div class="booking-card">
+
+    <h3>Booking #{{ booking.id }}</h3>
+
+    <p>
+        Khách hàng:
+        {{ booking.customerName }}
+    </p>
+
+    <p>
+        Dịch vụ:
+        {{ booking.serviceName }}
+    </p>
+
+    <p>
+        Ngày đặt:
+        {{ booking.bookingDate }}
+    </p>
+
+    <p>
+        Địa điểm:
+        {{ booking.pickupLocation }}
+    </p>
+
+    <p>
+        Trạng thái:
+        {{ booking.status }}
+    </p>
+    @if (booking.status === 'Pending') {
+
+    <p>Chờ nhà cung cấp xác nhận</p>
+    <button>Xác nhận</button>
+
+    } @else {
+
+    <p>Booking đã được xác nhận</p>
+
+    }
+
+    <button (click)="onCancel()">Hủy</button>
+
+</div>

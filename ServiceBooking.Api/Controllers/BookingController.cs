@@ -7,7 +7,7 @@ using System.Security.Claims;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/bookings")]
+[Route("api/booking")]
 [Authorize]
 public class BookingController : ControllerBase
 {
@@ -63,7 +63,7 @@ public class BookingController : ControllerBase
         }
     }
 
-    [HttpGet("customer")]
+    [HttpGet("customer/bookings")]
     public async Task<ActionResult<IEnumerable<BookingResponseDto>>>
         GetCustomerBookings()
     {
@@ -215,7 +215,7 @@ public class BookingController : ControllerBase
             return Conflict(ex.Message);
         }
     }
-    [HttpGet("Provider")]
+    [HttpGet("provider/bookings")]
     public async Task<ActionResult<IEnumerable<BookingResponseDto>>>
         GetProviderBookings()
     {

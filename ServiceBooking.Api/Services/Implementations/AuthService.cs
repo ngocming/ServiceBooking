@@ -24,8 +24,8 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto?> RegisterAsync(RegisterRequestDto dto)
     {
-        var emailExit = await _context.Users.AnyAsync(u => u.Email == dto.Email);
-        if(emailExit)
+        var userExists = await _context.Users.AnyAsync(u => u.Email == dto.Email || u.Username == dto.Username);
+        if (userExists)
             return null;
 
         var user = new User

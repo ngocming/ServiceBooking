@@ -1,1 +1,8 @@
-<p>bookings works!</p>
+<h1>My Bookings</h1>
+
+<div class="booking-list">
+    @for (b of bookings; track b.id) {
+    <app-booking-card [booking]="b" (cancelBooking)="onCancel($event)">
+    </app-booking-card>
+    }
+</div>
