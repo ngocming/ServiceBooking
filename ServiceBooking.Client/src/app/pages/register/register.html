@@ -58,6 +58,15 @@
         }
       </div>
 
+      <!-- Role Select -->
+      <div class="form-group">
+        <label for="role">Loại tài khoản</label>
+        <select id="role" formControlName="role" class="form-select">
+          <option value="Customer">Khách hàng (Người đặt dịch vụ)</option>
+          <option value="Provider">Nhà cung cấp dịch vụ</option>
+        </select>
+      </div>
+
       <!-- Submit Button -->
       <button type="submit" [disabled]="registerForm.invalid" class="btn-submit">
         Đăng Ký

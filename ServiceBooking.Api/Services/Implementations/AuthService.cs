@@ -28,15 +28,37 @@ public class AuthService : IAuthService
         if (userExists)
             return null;
 
+        var role = string.Equals(dto.Role, "Provider", StringComparison.OrdinalIgnoreCase) ? "Provider" : "Customer";
+
         var user = new User
         {
             Username = dto.Username,
             Email = dto.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-            Role = "User"
+            Role = role
         };
 
         _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        if (role == "Provider")
+        {
+            var provider = new Provider
+            {
+                UserId = user.Id,
+                DisplayName = user.Username
+            };
+            _context.Providers.Add(provider);
+        }
+        else
+        {
+            var customer = new Customer
+            {
+                UserId = user.Id
+            };
+            _context.Customers.Add(customer);
+        }
+
         await _context.SaveChangesAsync();
 
         return new AuthResponseDto

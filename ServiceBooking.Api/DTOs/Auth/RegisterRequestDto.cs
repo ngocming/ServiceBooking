@@ -14,6 +14,7 @@ public class RegisterRequestDto
     [Required, StringLength(100)]
     [DataType(DataType.Password)]
     public required string Password { get; init; }
- // Customer, Provider, Admin
-    
+
+    [Required]
+    public string Role { get; init; } = "Customer"; // Customer hoặc Provider
 }
