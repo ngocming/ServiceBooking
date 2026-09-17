@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { DatePipe } from '@angular/common';
 
 @Component({
-  imports: [],
+  imports: [DatePipe],
   selector: 'app-booking-card',
   styleUrl: './booking-card.css',
   templateUrl: './booking-card.html',

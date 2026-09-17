@@ -1,8 +1,21 @@
 <h1>My Bookings</h1>
 
+@if (loading) {
+<div class="loading-page" role="status" aria-live="polite">
+    <div class="loading-spinner"></div>
+    <p>Loading bookings...</p>
+</div>
+} @else if (errorMessage) {
+<div class="error-message">
+    {{ errorMessage }}
+</div>
+} @else {
 <div class="booking-list">
     @for (b of bookings; track b.id) {
     <app-booking-card [booking]="b" (cancelBooking)="onCancel($event)">
     </app-booking-card>
+    } @empty {
+    <p class="empty-message">No bookings found.</p>
     }
 </div>
+}

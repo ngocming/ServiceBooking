@@ -19,6 +19,12 @@ export class Login {
     this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
         localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify({
+          id: response.id,
+          username: response.username,
+          email: response.email,
+          role: response.role
+        }));
         this.router.navigate(['/bookings']);
       },
       error: (err) => console.error('Error logging in:', err)

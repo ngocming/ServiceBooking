@@ -1,10 +1,9 @@
 <div class="booking-card">
-
     <h3>Booking #{{ booking.id }}</h3>
 
     <p>
-        Khách hàng:
-        {{ booking.customerName }}
+        Nhà cung cấp:
+        {{ booking.providerName }}
     </p>
 
     <p>
@@ -14,29 +13,30 @@
 
     <p>
         Ngày đặt:
-        {{ booking.bookingDate }}
+        {{ booking.bookingDate | date:'dd/MM/yyyy HH:mm' }}
     </p>
 
     <p>
-        Địa điểm:
-        {{ booking.pickupLocation }}
+        Tổng tiền:
+        {{ booking.totalPrice }}
     </p>
+
+    @if (booking.note) {
+    <p>
+        Ghi chú:
+        {{ booking.note }}
+    </p>
+    }
 
     <p>
         Trạng thái:
         {{ booking.status }}
     </p>
+
     @if (booking.status === 'Pending') {
-
     <p>Chờ nhà cung cấp xác nhận</p>
-    <button>Xác nhận</button>
-
-    } @else {
-
-    <p>Booking đã được xác nhận</p>
-
-    }
-
     <button (click)="onCancel()">Hủy</button>
-
+    } @else {
+    <p>Booking đã được xác nhận</p>
+    }
 </div>

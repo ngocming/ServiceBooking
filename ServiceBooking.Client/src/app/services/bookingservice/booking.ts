@@ -4,11 +4,16 @@ import { Observable } from 'rxjs';
 
 export interface BookingItem {
     id: number;
-    customerName: string;
+    customerId: number;
+    providerId: number;
+    providerServiceId: number;
     serviceName: string;
+    providerName: string;
     bookingDate: string;
-    pickupLocation: string;
     status: string;
+    note?: string;
+    totalPrice: number;
+    createdAt: string;
 }
 
 @Service()
@@ -18,8 +23,14 @@ export class Booking {
     private http = inject(HttpClient);
 
     getBooking(): Observable<BookingItem[]> {
+        const user = localStorage.getItem('user');
+        const role = user ? JSON.parse(user).role : '';
+        const path = role === 'Provider'
+            ? 'provider/bookings'
+            : 'customer/bookings';
+
         return this.http.get<BookingItem[]>(
-            `${this.baseUrl}/customer/bookings`
+            `${this.baseUrl}/${path}`
         );
     }
     cancelBooking(id: number) {

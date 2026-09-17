@@ -3,6 +3,10 @@ import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
 
 export interface LoginResponse {
+    id: number;
+    username: string;
+    email: string;
+    role: string;
     token: string;
 }
 
