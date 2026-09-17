@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { BookingItem } from '../../services/bookingservice/booking';
 
 @Component({
   imports: [DatePipe],
@@ -8,7 +9,7 @@ import { DatePipe } from '@angular/common';
   templateUrl: './booking-card.html',
 })
 export class BookingCard {
-  @Input() booking: any;
+  @Input() booking!: BookingItem;
   @Output() cancelBooking = new EventEmitter<number>();
 
   onCancel() {
