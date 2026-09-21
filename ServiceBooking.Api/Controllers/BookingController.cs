@@ -62,7 +62,7 @@ public class BookingController : ControllerBase
             return Conflict(ex.Message);
         }
     }
-
+    [Authorize(Roles = "Customer")]
     [HttpGet("customer/bookings")]
     public async Task<ActionResult<IEnumerable<BookingResponseDto>>>
         GetCustomerBookings()
