@@ -1,10 +1,12 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, throwError } from 'rxjs';
+import { catchError, tap, throwError } from 'rxjs';
+import { ServerStatus } from '../services/server-status/server-status';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const serverStatus = inject(ServerStatus);
 
   const token = localStorage.getItem('token');
 
@@ -18,7 +20,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   return next(req).pipe(
+    tap(() => serverStatus.markAvailable()),
     catchError((error) => {
+
+      if (error.status === 0) {
+        serverStatus.markUnavailable();
+      }
 
       // 401 - Token không hợp lệ / hết hạn / chưa đăng nhập
       if (error.status === 401) {

@@ -1,0 +1,25 @@
+.server-status-banner {
+	align-items: center;
+	background: #fff4e5;
+	border-bottom: 1px solid #f2c078;
+	color: #8a4b08;
+	display: flex;
+	font-size: 14px;
+	gap: 10px;
+	justify-content: center;
+	min-height: 44px;
+	padding: 10px 16px;
+	text-align: center;
+}
+
+.server-status-icon {
+	align-items: center;
+	background: #c66a0a;
+	border-radius: 50%;
+	color: #ffffff;
+	display: inline-flex;
+	font-weight: 700;
+	height: 20px;
+	justify-content: center;
+	width: 20px;
+}

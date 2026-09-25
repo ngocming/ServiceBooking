@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectorRef } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormGroup, FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Auth } from '../../services/auth/auth';
@@ -12,6 +12,11 @@ import { Auth } from '../../services/auth/auth';
 export class Register {
   private authService = inject(Auth);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
+
+  showPassword = false;
+  isLoading = false;
+  errorMessage = '';
 
   registerForm = new FormGroup({
     username: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -20,18 +25,40 @@ export class Register {
     role: new FormControl('Customer', [Validators.required]),
   });
 
-  onSubmit() {
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  selectRole(role: string): void {
+    this.registerForm.patchValue({ role });
+  }
+
+  onSubmit(): void {
     if (this.registerForm.invalid) return;
+
+    this.isLoading = true;
+    this.errorMessage = '';
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        alert('Đăng ký tài khoản thành công! Vui lòng đăng nhập.');
+        this.isLoading = false;
         this.router.navigate(['/login']);
+        this.cdr.markForCheck();
       },
       error: (err) => {
+        this.isLoading = false;
         console.error('Error registering:', err);
-        alert('Đăng ký thất bại. Vui lòng thử lại.');
+        if (err.status === 0 || !err.status) {
+          this.errorMessage = 'Máy chủ hiện không hoạt động (Server Offline). Vui lòng kiểm tra lại kết nối hoặc thử lại sau.';
+        } else if (err.error?.message) {
+          this.errorMessage = err.error.message;
+        } else {
+          this.errorMessage = 'Đăng ký thất bại. Email hoặc thông tin có thể đã tồn tại.';
+        }
+        this.cdr.markForCheck();
       }
     });
   }
 }
+
+

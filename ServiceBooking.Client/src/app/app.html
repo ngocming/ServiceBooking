@@ -1,1 +1,8 @@
+@if (serverStatus.isUnavailable()) {
+	<div class="server-status-banner" role="alert">
+		<span class="server-status-icon" aria-hidden="true">!</span>
+		<span>Server hiện không hoạt động. Vui lòng thử lại sau.</span>
+	</div>
+}
+
 <router-outlet />

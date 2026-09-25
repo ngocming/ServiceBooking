@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { BookingItem } from '../../services/bookingservice/booking';
+import { BookingItem } from '../../services/booking/booking';
 
 @Component({
   imports: [DatePipe],
