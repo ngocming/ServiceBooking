@@ -134,4 +134,23 @@ public class ProviderService : IProviderService
 
         return true;
     }
+    public async Task<ProviderResponseDto?> GetByUserIdAsync(int userId)
+    {
+        return await _context.Providers
+            .Where(p => p.UserId == userId)
+            .Select(p => new ProviderResponseDto
+            {
+                Id = p.Id,
+                UserId = p.UserId,
+                DisplayName = p.DisplayName,
+                Description = p.Description,
+                Phone = p.Phone,
+                Address = p.Address,
+                Latitude = p.Latitude,
+                Longitude = p.Longitude,
+                IsAvailable = p.IsAvailable,
+                CreatedAt = p.CreatedAt
+            })
+            .FirstOrDefaultAsync();
+    }
 }

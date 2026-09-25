@@ -44,7 +44,13 @@ export class Login {
           email: response.email,
           role: response.role
         }));
-        this.router.navigate(['/bookings']);
+        if (response.role === 'Customer') {
+          this.router.navigate(['/bookings']);
+        } else if (response.role === 'Provider') {
+          this.router.navigate(['/provider/bookings']);
+        } else if (response.role === 'Admin') {
+          this.router.navigate(['/admin']);
+        }
         this.cdr.markForCheck();
       },
       error: (err) => {

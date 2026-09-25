@@ -12,7 +12,7 @@ export const roleGuard: CanActivateFn = (route, state) => {
         const role = JSON.parse(user).role;
         const allowedRoles = route.data?.['roles'] as string[];
         if (!allowedRoles || allowedRoles.length === 0) {
-            return true; 
+            return true;
         }
         if (allowedRoles.includes(role)) {
             return true;
@@ -23,5 +23,5 @@ export const roleGuard: CanActivateFn = (route, state) => {
         localStorage.removeItem('user');
         return router.createUrlTree(['/login']);
     }
-    
+
 };

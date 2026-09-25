@@ -2,14 +2,18 @@
 
 @for (service of services; track service.id) {
 
-  <div>
-    <h2>{{ service.name }}</h2>
+<div>
+  <h2>{{ service.name }}</h2>
 
-    <p>Giá: {{ service.price }} VNĐ</p>
+  <p>Mô tả: {{ service.description }}</p>
 
-    <p>Provider: {{ service.provider }}</p>
+  <p>Giá: {{ service.price }} VNĐ</p>
 
-    <button>Đặt lịch</button>
-  </div>
+  <p>Thời gian: {{ service.durationMinutes }} phút</p>
+
+  <p>Provider ID: {{ service.providerId }}</p>
+
+  <button>Đặt lịch</button>
+</div>
 
 }

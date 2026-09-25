@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
-[Route("api/provider-services")]
+[Route("api/pvdservices")]
 public class ProviderServicesController : ControllerBase
 {
     private readonly IProviderServiceOfferingService _providerServiceOfferingService;
@@ -24,6 +24,7 @@ public class ProviderServicesController : ControllerBase
         return Ok(providerServices);
     }
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<List<ProviderServiceResponseDto>>> GetAll()
     {
         var providerServices = await _providerServiceOfferingService.GetAllAsync();

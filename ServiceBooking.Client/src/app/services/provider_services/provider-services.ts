@@ -1,14 +1,16 @@
-import { Inject, Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface ProviderService {
+export interface ProviderServiceItem {
     id: number;
+    providerId: number;
     name: string;
-    description?: string;
+    description: string;
     price: number;
     durationMinutes: number;
-    providerId: number;
+    createdAt: string;
+    isAvailable: boolean;
 }
 
 export interface CreateProviderServiceDTO {
@@ -19,26 +21,30 @@ export interface CreateProviderServiceDTO {
     providerId: number;
 }
 
-@Injectable()
+@Service()
 export class ProviderServices {
-    private baseUrl = 'http://localhost:5128/api/providder';
-    constructor(@Inject(HttpClient) private http: HttpClient) { }
-    
-    getAllProviderServices(): Observable<ProviderService[]> {
-        return this.http.get<ProviderService[]>(this.baseUrl);
+    private baseUrl = 'http://localhost:5128/api/pvdservices';
+    private http = inject(HttpClient);
+
+    getAllProviderServices(): Observable<ProviderServiceItem[]> {
+        return this.http.get<ProviderServiceItem[]>(this.baseUrl);
     }
-    
-    getProviderServiceById(id: number): Observable<ProviderService> {
-        return this.http.get<ProviderService>(`${this.baseUrl}/${id}`);
+
+    getProviderServiceById(id: number): Observable<ProviderServiceItem> {
+        return this.http.get<ProviderServiceItem>(`${this.baseUrl}/${id}`);
     }
-    
-    createProviderService(serviceData: CreateProviderServiceDTO): Observable<ProviderService> {
+
+    getProviderServicesByProviderId(id: number): Observable<ProviderServiceItem[]> {
+        return this.http.get<ProviderServiceItem[]>(`${this.baseUrl}/provider/${id}`);
+    }
+
+    createProviderService(serviceData: CreateProviderServiceDTO): Observable<ProviderServiceItem> {
         const headers = new HttpHeaders({
             'Content-Type': 'application/json'
         });
-        return this.http.post<ProviderService>(this.baseUrl, serviceData, { headers });
+        return this.http.post<ProviderServiceItem>(this.baseUrl, serviceData, { headers });
     }
-    
+
     deleteProviderService(id: number): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}/${id}`);
     }

@@ -15,8 +15,12 @@ export interface ProviderItem {
 @Service()
 export class Provider {
 
-    private baseUrl = 'http://localhost:5128/api/pvdservices';
+    private baseUrl = 'http://localhost:5128/api/providers';
     private http = inject(HttpClient);
+    getProfile(): Observable<ProviderItem[]> {
+        return this.http.get<ProviderItem[]>(`${this.baseUrl}/profile`);
+    }
+
     getAll(): Observable<ProviderItem[]> {
         return this.http.get<ProviderItem[]>(this.baseUrl);
     }
@@ -29,7 +33,5 @@ export class Provider {
     update(id: number, body: any) {
         return this.http.put(`${this.baseUrl}/${id}`, body);
     }
-    toggleAvailability(id: number) {
-        return this.http.patch(`${this.baseUrl}/${id}/toggleAvailability`, {});
-    }
+
 }

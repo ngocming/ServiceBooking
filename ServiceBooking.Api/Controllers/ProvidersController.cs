@@ -18,8 +18,23 @@ public class ProvidersController : ControllerBase
         _providerService = providerService;
     }
 
-    [HttpGet]
-    [Authorize(Roles = "Admin")]
+    [HttpGet("profile")]
+    [Authorize(Roles = "Admin,Provider")]
+    public async Task<ActionResult<List<ProviderResponseDto>>> GetProfile()
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var providers = await _providerService.GetByUserIdAsync(userId);
+        return Ok(providers);
+    }
+
+
+    [HttpGet("list")]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<ActionResult<List<ProviderResponseDto>>> GetAll()
     {
         var providers = await _providerService.GetAllAsync();
@@ -27,7 +42,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin,Customer")]
     public async Task<ActionResult<ProviderResponseDto>> GetById(int id)
     {
         var provider = await _providerService.GetByIdAsync(id);
@@ -37,7 +52,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProviderResponseDto>> Create([FromBody] CreateProviderDto dto)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -54,7 +69,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProviderResponseDto>> Update(int id, [FromBody] UpdateProviderDto dto)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -78,7 +93,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> Delete(int id)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
