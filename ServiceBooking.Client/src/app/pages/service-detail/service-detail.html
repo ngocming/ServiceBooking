@@ -1,0 +1,17 @@
+<h1>Chi tiết dịch vụ</h1>
+
+@if (loading) {
+  <p>Đang tải...</p>
+} @else if (errorMessage) {
+  <p>{{ errorMessage }}</p>
+} @else if (service) {
+  <h2>{{ service.name }}</h2>
+  <p>Mô tả: {{ service.description }}</p>
+  <p>Giá: {{ service.price }} VNĐ</p>
+  <p>Thời gian: {{ service.durationMinutes }} phút</p>
+  <p>Provider ID: {{ service.providerId }}</p>
+  <p>Trạng thái: {{ service.isAvailable ? 'Đang hoạt động' : 'Không hoạt động' }}</p>
+  <p>Ngày tạo: {{ service.createdAt }}</p>
+
+  <a routerLink="/services">Quay lại danh sách</a>
+}
