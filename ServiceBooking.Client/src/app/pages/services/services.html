@@ -1,5 +1,7 @@
 <h1>Danh sách dịch vụ</h1>
-
+<a routerLink="/services/create">
+  Tạo dịch vụ
+</a>
 @for (service of services; track service.id) {
 
 <div>
@@ -14,6 +16,7 @@
   <p>Provider ID: {{ service.providerId }}</p>
 
   <button>Đặt lịch</button>
+
 </div>
 
 }

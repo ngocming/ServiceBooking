@@ -1,0 +1,75 @@
+<h1>Tạo dịch vụ</h1>
+
+<form [formGroup]="serviceForm" (ngSubmit)="createService()">
+
+  <div>
+    <label>Tên dịch vụ</label>
+
+    <input
+      type="text"
+      formControlName="name"
+    >
+
+    @if (
+      serviceForm.controls.name.touched &&
+      serviceForm.controls.name.invalid
+    ) {
+      <p>Tên dịch vụ phải có ít nhất 3 ký tự.</p>
+    }
+  </div>
+
+
+  <div>
+    <label>Mô tả</label>
+
+    <textarea
+      formControlName="description">
+    </textarea>
+  </div>
+
+
+  <div>
+    <label>Giá</label>
+
+    <input
+      type="number"
+      formControlName="price"
+    >
+
+    @if (
+      serviceForm.controls.price.touched &&
+      serviceForm.controls.price.invalid
+    ) {
+      <p>Giá phải lớn hơn 0.</p>
+    }
+  </div>
+
+
+  <div>
+    <label>Thời gian (phút)</label>
+
+    <input
+      type="number"
+      formControlName="durationMinutes"
+    >
+  </div>
+
+
+  @if (errorMessage) {
+    <p>{{ errorMessage }}</p>
+  }
+
+
+  <button
+    type="submit"
+    [disabled]="loading">
+
+    @if (loading) {
+      Đang tạo...
+    } @else {
+      Tạo dịch vụ
+    }
+
+  </button>
+
+</form>

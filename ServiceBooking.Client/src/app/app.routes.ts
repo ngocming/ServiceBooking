@@ -5,6 +5,7 @@ import { Register } from './pages/register/register';
 import { Forbidden } from './pages/forbidden/forbidden';
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
+import { CreateService } from './page/services/create-service/create-service';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -23,4 +24,12 @@ export const routes: Routes = [
     data: { roles: ['Provider'] }
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+  path: 'services/create',
+  component: CreateService,
+  canActivate: [authGuard, roleGuard],
+  data: {
+    roles: ['Provider']
+  }
+}
 ];

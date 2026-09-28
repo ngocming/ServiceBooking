@@ -1,8 +1,8 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { ProviderServices, ProviderServiceItem } from '../../services/provider_services/provider-services';
-
+import { RouterLink } from '@angular/router';
 @Component({
-  imports: [],
+  imports: [RouterLink],
   selector: 'app-services',
   styleUrl: './services.css',
   templateUrl: './services.html',
@@ -37,5 +37,5 @@ export class Services implements OnInit {
       }
     });
   }
-  
+
 }
