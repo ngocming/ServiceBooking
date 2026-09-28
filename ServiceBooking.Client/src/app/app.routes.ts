@@ -4,7 +4,7 @@ import { Login } from './pages/login/login';
 import { Register } from './pages/register/register';
 import { Forbidden } from './pages/forbidden/forbidden';
 import { Services } from './pages/services/services';
-import { CreateService } from './page/services/create-service/create-service';
+import { CreateService } from './pages/services/create-service/create-service';
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
 
@@ -14,7 +14,7 @@ export const routes: Routes = [
   { path: 'forbidden', component: Forbidden },
 
   {
-    path: 'bookings',
+    path: 'customer/bookings',
     component: Bookings,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Customer'] }
