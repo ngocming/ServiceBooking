@@ -18,7 +18,6 @@ import {
   styleUrl: './create-service.css'
 })
 export class CreateService {
-
   private providerServices = inject(ProviderServices);
   private router = inject(Router);
 
@@ -30,16 +29,13 @@ export class CreateService {
       nonNullable: true,
       validators: [Validators.required, Validators.minLength(3)]
     }),
-
     description: new FormControl('', {
       nonNullable: true
     }),
-
     price: new FormControl(0, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1)]
     }),
-
     durationMinutes: new FormControl(30, {
       nonNullable: true,
       validators: [Validators.required, Validators.min(1)]
@@ -47,49 +43,41 @@ export class CreateService {
   });
 
   createService() {
-
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
       return;
     }
 
-    const user = localStorage.getItem('user');
-
-    if (!user) {
-      this.errorMessage = 'Không tìm thấy thông tin người dùng.';
-      return;
-    }
-
-    const userData = JSON.parse(user);
-
     const serviceData: CreateProviderServiceDTO = {
       name: this.serviceForm.controls.name.value,
       description: this.serviceForm.controls.description.value,
       price: this.serviceForm.controls.price.value,
-      durationMinutes:
-        this.serviceForm.controls.durationMinutes.value,
-      providerId: userData.providerId
+      durationMinutes: this.serviceForm.controls.durationMinutes.value
     };
 
     this.loading = true;
     this.errorMessage = '';
 
-    this.providerServices
-      .createProviderService(serviceData)
-      .subscribe({
-        next: () => {
-          this.loading = false;
+    this.providerServices.createProviderService(serviceData).subscribe({
+      next: (createdService) => {
+        console.log('Created service:', createdService);
+        this.loading = false;
+        this.router.navigate(['/services']);
+      },
+      error: (error) => {
+        console.error('Create service error:', error);
+        this.loading = false;
 
-          this.router.navigate(['/services']);
-        },
-
-        error: (error) => {
-          console.error(error);
-
-          this.loading = false;
-          this.errorMessage =
-            'Không thể tạo dịch vụ.';
+        if (error.status === 400) {
+          this.errorMessage = error.error || 'Dữ liệu dịch vụ không hợp lệ.';
+        } else if (error.status === 401) {
+          this.errorMessage = 'Phiên đăng nhập không hợp lệ. Vui lòng đăng nhập lại.';
+        } else if (error.status === 403) {
+          this.errorMessage = 'Tài khoản hiện tại không có quyền tạo dịch vụ.';
+        } else {
+          this.errorMessage = 'Không thể tạo dịch vụ. Vui lòng thử lại.';
         }
-      });
+      }
+    });
   }
 }
