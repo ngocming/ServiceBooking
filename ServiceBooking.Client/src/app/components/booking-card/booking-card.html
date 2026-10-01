@@ -1,42 +1,96 @@
 <div class="booking-card">
-    <h3>Booking #{{ booking.id }}</h3>
+  <div class="card-header">
+    <div class="booking-id">
+      <span class="hash">#</span>{{ booking.id }}
+    </div>
+    <div class="status-badge" [class]="'status-' + (booking.status | lowercase)">
+      <span class="status-dot"></span>
+      {{ booking.status }}
+    </div>
+  </div>
 
-    <p>
-        Nhà cung cấp:
-        {{ booking.providerName }}
-    </p>
+  <div class="card-body">
+    <div class="info-row">
+      <div class="icon-wrapper">
+         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="info-content">
+        <span class="info-label">Nhà cung cấp</span>
+        <span class="info-value">{{ booking.providerName }}</span>
+      </div>
+    </div>
 
-    <p>
-        Dịch vụ:
-        {{ booking.serviceName }}
-    </p>
+    <div class="info-row">
+      <div class="icon-wrapper">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div class="info-content">
+        <span class="info-label">Dịch vụ</span>
+        <span class="info-value">{{ booking.serviceName }}</span>
+      </div>
+    </div>
 
-    <p>
-        Ngày đặt:
-        {{ booking.bookingDate | date:'dd/MM/yyyy HH:mm' }}
-    </p>
+    <div class="info-row">
+      <div class="icon-wrapper">
+         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      </div>
+      <div class="info-content">
+        <span class="info-label">Ngày đặt</span>
+        <span class="info-value">{{ booking.bookingDate | date:'dd MMM yyyy • HH:mm' }}</span>
+      </div>
+    </div>
 
-    <p>
-        Tổng tiền:
-        {{ booking.totalPrice }}
-    </p>
+    <div class="info-row">
+      <div class="icon-wrapper price-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      </div>
+      <div class="info-content">
+        <span class="info-label">Tổng tiền</span>
+        <span class="info-value price">{{ booking.totalPrice }}</span>
+      </div>
+    </div>
 
     @if (booking.note) {
-    <p>
-        Ghi chú:
-        {{ booking.note }}
-    </p>
+    <div class="info-row">
+      <div class="icon-wrapper note-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <div class="info-content">
+        <span class="info-label">Ghi chú</span>
+        <span class="info-value note-text">{{ booking.note }}</span>
+      </div>
+    </div>
     }
+  </div>
 
-    <p>
-        Trạng thái:
-        {{ booking.status }}
-    </p>
-
-    @if (booking.status === 'Pending') {
-    <p>Chờ nhà cung cấp xác nhận</p>
-    <button (click)="onCancel()">Hủy</button>
-    } @else {
-    <p>Booking đã được xác nhận</p>
-    }
+  <div class="card-footer">
+    <div class="status-msg">
+      @if (booking.status === 'Pending') {
+      <span class="msg-pending">Chờ xác nhận</span>
+      } @else if (booking.status === 'Confirmed') {
+      <span class="msg-confirmed">Đã xác nhận</span>
+      } @else if (booking.status === 'Completed') {
+      <span class="msg-completed">Đã hoàn thành</span>
+      } @else if (booking.status === 'Cancelled') {
+      <span class="msg-cancelled">Đã hủy</span>
+      }
+    </div>
+    <div class="action-buttons">
+      @if (booking.status === 'Pending') {
+        @if (userRole === 'Provider') {
+        <button class="btn-confirm" (click)="onConfirm()">
+          Xác nhận
+        </button>
+        }
+        <button class="btn-cancel" (click)="onCancel()">
+          Hủy
+        </button>
+      }
+      @if (booking.status === 'Confirmed' && userRole === 'Provider') {
+      <button class="btn-complete" (click)="onComplete()">
+        Hoàn thành
+      </button>
+      }
+    </div>
+  </div>
 </div>

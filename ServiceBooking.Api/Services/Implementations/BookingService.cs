@@ -173,10 +173,17 @@ public class BookingService : IBookingService
                 "Booking not found.");
         }
 
-        if (booking.Customer.UserId != userId)
+        var isCustomer = booking.Customer.UserId == userId;
+
+        var isProvider = await _dbContext.Providers
+            .AnyAsync(p =>
+                p.Id == booking.ProviderId &&
+                p.UserId == userId);
+
+        if (!isCustomer && !isProvider)
         {
             throw new UnauthorizedAccessException(
-                "Only the customer can cancel this booking.");
+                "Only the customer or provider can cancel this booking.");
         }
 
         if (booking.Status != BookingStatus.Pending)

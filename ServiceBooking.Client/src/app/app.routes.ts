@@ -28,13 +28,14 @@ export const routes: Routes = [
   },
 
   {
-    path: 'services',
+    path: 'provider/services',
     component: Services,
-    canActivate: [authGuard]
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Provider'] }
   },
 
   {
-    path: 'services/create',
+    path: 'provider/services/create',
     component: CreateService,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Provider'] }

@@ -15,8 +15,10 @@ export class Bookings implements OnInit {
   loading = false;
   errorMessage = '';
   Message = '';
+  userRole = '';
   private cdr = inject(ChangeDetectorRef);
   ngOnInit() {
+    this.userRole = this.bookingService.getUserRole();
     this.loadBookings();
   }
 
@@ -57,10 +59,30 @@ export class Bookings implements OnInit {
   onCancel(id: number) {
     this.bookingService.cancelBooking(id).subscribe({
       next: () => {
-        this.bookings = this.bookings.filter(b => b.id !== id);
+        this.loadBookings();
       },
       error: (err) => {
         console.error('Error cancelling booking:', err);
+      }
+    });
+  }
+  onConfirm(id: number) {
+    this.bookingService.confirmBooking(id).subscribe({
+      next: () => {
+        this.loadBookings();
+      },
+      error: (err) => {
+        console.error('Error confirming booking:', err);
+      }
+    });
+  }
+  onComplete(id: number) {
+    this.bookingService.completeBooking(id).subscribe({
+      next: () => {
+        this.loadBookings();
+      },
+      error: (err) => {
+        console.error('Error completing booking:', err);
       }
     });
   }

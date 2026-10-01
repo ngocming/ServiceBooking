@@ -45,7 +45,7 @@ export class Login {
           role: response.role
         }));
         if (response.role === 'Customer') {
-          this.router.navigate(['/bookings']);
+          this.router.navigate(['/customer/bookings']);
         } else if (response.role === 'Provider') {
           this.router.navigate(['/provider/bookings']);
         } else if (response.role === 'Admin') {

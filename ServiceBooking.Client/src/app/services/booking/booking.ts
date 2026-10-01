@@ -33,10 +33,26 @@ export class Booking {
             `${this.baseUrl}/${path}`
         );
     }
-    cancelBooking(id: number) {
-        return this.http.patch(
+    cancelBooking(id: number): Observable<void> {
+        return this.http.patch<void>(
             `${this.baseUrl}/${id}/cancel`,
             {}
         );
+    }
+    confirmBooking(id: number): Observable<void> {
+        return this.http.patch<void>(
+            `${this.baseUrl}/${id}/confirm`,
+            {}
+        );
+    }
+    completeBooking(id: number): Observable<void> {
+        return this.http.patch<void>(
+            `${this.baseUrl}/${id}/complete`,
+            {}
+        );
+    }
+    getUserRole(): string {
+        const user = localStorage.getItem('user');
+        return user ? JSON.parse(user).role : '';
     }
 }

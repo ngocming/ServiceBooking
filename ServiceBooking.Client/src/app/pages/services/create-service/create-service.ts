@@ -57,12 +57,33 @@ export class CreateService {
   });
 
   createService() {
-
     if (this.serviceForm.invalid) {
       this.serviceForm.markAllAsTouched();
       return;
     }
 
-    console.log('Form valid:', this.serviceForm.value);
+    this.loading = true;
+    this.errorMessage = '';
+
+    const newService: CreateProviderServiceDTO = {
+      name: this.serviceForm.value.name!,
+      description: this.serviceForm.value.description!,
+      price: this.serviceForm.value.price!,
+      durationMinutes: this.serviceForm.value.durationMinutes!
+    };
+
+    this.providerServices.createProviderService(newService).subscribe({
+      next: (response) => {
+        this.loading = false;
+        console.log('Service created successfully:', response);
+        // Navigate back to services list or show success message
+        this.router.navigate(['/services']); 
+      },
+      error: (error) => {
+        this.loading = false;
+        console.error('Error creating service:', error);
+        this.errorMessage = 'Có lỗi xảy ra khi tạo dịch vụ. Vui lòng thử lại.';
+      }
+    });
   }
 }
