@@ -1,0 +1,33 @@
+<h1>CHI TIẾT DỊCH VỤ</h1>
+
+@if (loading()) {
+<p>Đang tải...</p>
+}
+
+@if (errorMessage()) {
+<p style="color: red;">{{ errorMessage() }}</p>
+}
+
+@if (service()) {
+<h2>{{ service()!.name }}</h2>
+
+<p>
+    <strong>Mô tả:</strong>
+    {{ service()!.description }}
+</p>
+
+<p>
+    <strong>Giá:</strong>
+    {{ service()!.price }}
+</p>
+
+<p>
+    <strong>Thời gian:</strong>
+    {{ service()!.durationMinutes }} phút
+</p>
+
+<p>
+    <strong>Có sẵn:</strong>
+    {{ service()!.isAvailable ? 'Có' : 'Không' }}
+</p>
+}

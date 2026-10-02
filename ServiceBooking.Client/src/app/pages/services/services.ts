@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProviderServices, ProviderServiceItem } from '../../services/provider_services/provider-services';
 import { RouterLink } from '@angular/router';
 @Component({
@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
   templateUrl: './services.html',
 })
 export class Services implements OnInit {
-  services: ProviderServiceItem[] = [];
+  services = signal<ProviderServiceItem[]>([]);
   private providerService = inject(ProviderServices);
 
   ngOnInit(): void {
@@ -20,7 +20,7 @@ export class Services implements OnInit {
     this.providerService.getAllProviderServices().subscribe({
       next: (data: ProviderServiceItem[]) => {
         console.log('Services received from API:', data);
-        this.services = data || [];
+        this.services.set(data || []);
       },
       error: (error) => {
         console.error('Error loading services:', error);

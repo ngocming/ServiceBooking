@@ -1,18 +1,16 @@
 <h1>Danh sách dịch vụ</h1>
-<a routerLink="/services/create">
+<a routerLink="provider/services/create">
   Tạo dịch vụ
 </a>
 
-@for (service of services; track service.id) {
-  <div>
-    <h2>{{ service.name }}</h2>
-    <p>Mô tả: {{ service.description }}</p>
-    <p>Giá: {{ service.price }} VNĐ</p>
-    <p>Thời gian: {{ service.durationMinutes }} phút</p>
-    <p>Provider ID: {{ service.providerId }}</p>
-
-    <a [routerLink]="['/services', service.id]">
-      Xem chi tiết
-    </a>
-  </div>
+@for (service of services(); track service.id) {
+<div>
+  <h2>{{ service.name }}</h2>
+  <p>Mô tả: {{ service.description }}</p>
+  <p>Giá: {{ service.price }} VNĐ</p>
+  <p>Thời gian: {{ service.durationMinutes }} phút</p>
+  <a [routerLink]="['/services', service.id]">
+    Xem chi tiết
+  </a>
+</div>
 }

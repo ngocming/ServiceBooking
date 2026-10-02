@@ -7,6 +7,7 @@ import { Services } from './pages/services/services';
 import { CreateService } from './pages/services/create-service/create-service';
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
+import { ServiceDetail } from './pages/services/service-detail/service-detail';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -41,5 +42,11 @@ export const routes: Routes = [
     data: { roles: ['Provider'] }
   },
 
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+    path: 'services/:id',
+    component: ServiceDetail,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Customer', 'Provider'] }
+  },
 ];
