@@ -27,26 +27,29 @@ export const routes: Routes = [
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Provider'] }
   },
-
-  {
-    path: 'provider/services',
-    component: Services,
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['Provider'] }
-  },
-
   {
     path: 'provider/services/create',
     component: CreateService,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Provider'] }
   },
-
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  {
+    path: 'provider/services',
+    component: Services,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Provider'] }
+  },
+  {
+    path: 'customer/services',
+    component: Services,
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Customer'] }
+  },
   {
     path: 'services/:id',
     component: ServiceDetail,
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Customer', 'Provider'] }
   },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
 ];

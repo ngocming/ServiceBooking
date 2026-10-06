@@ -50,7 +50,7 @@ public class BookingService : IBookingService
                 "Provider service not found.");
         }
 
-        // Kiểm tra booking trùng thời gian
+        
         var existingBooking = await _dbContext.Bookings
             .AnyAsync(b =>
                 b.ProviderServiceId == dto.ProviderServiceId &&

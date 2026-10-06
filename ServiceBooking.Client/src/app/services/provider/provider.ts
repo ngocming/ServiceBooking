@@ -12,6 +12,18 @@ export interface ProviderItem {
     createdAt: string;
     isAvailable: boolean;
 }
+export interface ProviderProfile {
+    id: number;
+    userId: number;
+    displayName: string;
+    description: string;
+    phone: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    isAvailable: boolean;
+    createdAt: string;
+}
 @Service()
 export class Provider {
 
@@ -33,5 +45,9 @@ export class Provider {
     update(id: number, body: any) {
         return this.http.put(`${this.baseUrl}/${id}`, body);
     }
-
+    getMyProfile(): Observable<ProviderProfile> {
+        return this.http.get<ProviderProfile>(
+            `${this.baseUrl}/profile`
+        );
+    }
 }

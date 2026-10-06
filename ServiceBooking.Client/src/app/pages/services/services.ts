@@ -1,6 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProviderServices, ProviderServiceItem } from '../../services/provider_services/provider-services';
 import { RouterLink } from '@angular/router';
+import { Provider } from '../../services/provider/provider';
+import { switchMap } from 'rxjs';
 @Component({
   imports: [RouterLink],
   selector: 'app-services',
@@ -10,23 +12,30 @@ import { RouterLink } from '@angular/router';
 export class Services implements OnInit {
   services = signal<ProviderServiceItem[]>([]);
   private providerService = inject(ProviderServices);
-
+  private provider = inject(Provider);
   ngOnInit(): void {
     this.loadServices();
   }
 
   loadServices() {
     console.log('Loading services from API...');
-    this.providerService.getAllProviderServices().subscribe({
-      next: (data: ProviderServiceItem[]) => {
-        console.log('Services received from API:', data);
-        this.services.set(data || []);
-      },
-      error: (error) => {
-        console.error('Error loading services:', error);
-      }
-    });
+    this.provider.getMyProfile()
+      .pipe(
+        switchMap(provider =>
+          this.providerService.getProviderServicesByProviderId(provider.id)
+        )
+      )
+      .subscribe({
+        next: services => {
+          console.log('Services received from API:', services);
+          this.services.set(services);
+        },
+        error: (error) => {
+          console.error('Error loading services:', error);
+        }
+      });
   }
+
   deleteService(id: number) {
     this.providerService.deleteProviderService(id).subscribe({
       next: () => {
@@ -37,5 +46,4 @@ export class Services implements OnInit {
       }
     });
   }
-
 }

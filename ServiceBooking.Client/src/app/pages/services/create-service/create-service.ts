@@ -76,13 +76,12 @@ export class CreateService {
       next: (response) => {
         this.loading = false;
         console.log('Service created successfully:', response);
-        // Navigate back to services list or show success message
-        this.router.navigate(['/services']); 
+        this.router.navigate(['/provider/services']);
       },
       error: (error) => {
         this.loading = false;
         console.error('Error creating service:', error);
-        this.errorMessage = 'Có lỗi xảy ra khi tạo dịch vụ. Vui lòng thử lại.';
+        this.errorMessage = 'Lỗi khi tạo dịch vụ. Vui lòng thử lại.';
       }
     });
   }
