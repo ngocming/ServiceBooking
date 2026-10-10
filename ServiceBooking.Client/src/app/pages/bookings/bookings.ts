@@ -25,8 +25,22 @@ export class Bookings implements OnInit {
   loadBookings() {
     this.loading = true;
     this.errorMessage = '';
+    const request = this.userRole === 'Provider'
+      ? this.bookingService.getProviderBookings()
+      : this.bookingService.getCustomerBookings();
 
-    this.bookingService.getBooking().
+    request.subscribe({
+      next: (bookings) => {
+        this.bookings = bookings;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.errorMessage = 'Không thể tải danh sách booking.';
+        this.loading = false;
+      }
+    });
+    request.
       pipe(
         tap(bookings => {
           console.log('Fetched booking:', bookings);

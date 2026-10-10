@@ -22,15 +22,14 @@ export class Booking {
 
     private http = inject(HttpClient);
 
-    getBooking(): Observable<BookingItem[]> {
-        const user = localStorage.getItem('user');
-        const role = user ? JSON.parse(user).role : '';
-        const path = role === 'Provider'
-            ? 'provider/bookings'
-            : 'customer/bookings';
-
+    getCustomerBookings(): Observable<BookingItem[]> {
         return this.http.get<BookingItem[]>(
-            `${this.baseUrl}/${path}`
+            `${this.baseUrl}/customer/bookings`
+        );
+    }
+    getProviderBookings(): Observable<BookingItem[]> {
+        return this.http.get<BookingItem[]>(
+            `${this.baseUrl}/provider/bookings`
         );
     }
     cancelBooking(id: number): Observable<void> {
