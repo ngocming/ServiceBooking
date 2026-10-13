@@ -16,6 +16,12 @@ export interface BookingItem {
     createdAt: string;
 }
 
+export interface CreateBookingDto {
+    providerServiceId: number;
+    bookingDate: string;
+    note?: string;
+}
+
 @Service()
 export class Booking {
     private baseUrl = 'http://localhost:5128/api/booking';
@@ -31,6 +37,9 @@ export class Booking {
         return this.http.get<BookingItem[]>(
             `${this.baseUrl}/provider/bookings`
         );
+    }
+    createBooking(dto: CreateBookingDto): Observable<BookingItem> {
+        return this.http.post<BookingItem>(this.baseUrl, dto);
     }
     cancelBooking(id: number): Observable<void> {
         return this.http.patch<void>(
