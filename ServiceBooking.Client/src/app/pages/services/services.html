@@ -1,16 +1,27 @@
-<h1>Danh sách dịch vụ</h1>
-<a routerLink="/provider/services/create">
-  Tạo dịch vụ
-</a>
 
-@for (service of services(); track service.id) {
-<div>
-  <h2>{{ service.name }}</h2>
-  <p>Mô tả: {{ service.description }}</p>
-  <p>Giá: {{ service.price }} VNĐ</p>
-  <p>Thời gian: {{ service.durationMinutes }} phút</p>
-  <a [routerLink]="['/services', service.id]">
-    Xem chi tiết
-  </a>
-</div>
+<h1>Danh sách dịch vụ</h1>
+
+@if (loading()) {
+  <p>Đang tải danh sách dịch vụ...</p>
+} @else if (errorMessage()) {
+  <p>{{ errorMessage() }}</p>
+  <button (click)="loadServices()">Thử lại</button>
+} @else if (services().length === 0) {
+  <p>Hiện chưa có dịch vụ nào.</p>
+} @else {
+  @for (service of services(); track service.id) {
+    <div class="service-card">
+      <h2>{{ service.name }}</h2>
+
+      <p>Mô tả: {{ service.description }}</p>
+
+      <p>Giá: {{ service.price }} VNĐ</p>
+
+      <p>Thời gian: {{ service.durationMinutes }} phút</p>
+
+      <a [routerLink]="['/services', service.id]">
+        Xem chi tiết
+      </a>
+    </div>
+  }
 }
