@@ -23,3 +23,7 @@
 	justify-content: center;
 	width: 20px;
 }
+
+.app-main {
+  min-height: 100vh;
+}

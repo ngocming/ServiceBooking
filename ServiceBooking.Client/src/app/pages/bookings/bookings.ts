@@ -2,7 +2,7 @@ import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { BookingCard } from '../../components/booking-card/booking-card';
 import { Booking } from '../../services/booking/booking';
 import { BookingItem } from '../../services/booking/booking';
-import { map, tap } from 'rxjs/operators';
+
 @Component({
   imports: [BookingCard],
   selector: 'app-bookings',
@@ -33,13 +33,17 @@ export class Bookings implements OnInit {
       next: (bookings) => {
         this.bookings = bookings;
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error(error);
         this.errorMessage = 'Không thể tải danh sách booking.';
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
+
+    /*
     request.
       pipe(
         tap(bookings => {
@@ -69,6 +73,7 @@ export class Bookings implements OnInit {
           this.cdr.detectChanges();
         }
       });
+      */
   }
   onCancel(id: number) {
     this.bookingService.cancelBooking(id).subscribe({

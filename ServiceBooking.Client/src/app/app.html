@@ -5,4 +5,10 @@
 	</div>
 }
 
-<router-outlet />
+@if (showNavbar()) {
+  <app-navbar />
+}
+
+<main class="app-main" [class.with-navbar]="showNavbar()">
+  <router-outlet />
+</main>

@@ -26,7 +26,6 @@ export interface CreateProviderServiceDTO {
 export class ProviderServices {
   private baseUrl = 'http://localhost:5128/api/pvdservices';
   private http = inject(HttpClient);
-
   getAllProviderServices(): Observable<ProviderServiceItem[]> {
     return this.http.get<ProviderServiceItem[]>(this.baseUrl);
   }
@@ -35,8 +34,8 @@ export class ProviderServices {
     return this.http.get<ProviderServiceItem>(`${this.baseUrl}/${id}`);
   }
 
-  getProviderServicesByProviderId(id: number): Observable<ProviderServiceItem[]> {
-    return this.http.get<ProviderServiceItem[]>(`${this.baseUrl}/provider/${id}`);
+  getProviderServicesByProviderId(providerId: number): Observable<ProviderServiceItem[]> {
+    return this.http.get<ProviderServiceItem[]>(`${this.baseUrl}/provider/${providerId}`);
   }
 
   createProviderService(

@@ -8,11 +8,13 @@ import { CreateService } from './pages/services/create-service/create-service';
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
 import { ServiceDetail } from './pages/services/service-detail/service-detail';
+import { Home } from './pages/home/home';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'forbidden', component: Forbidden },
+  { path: 'home', component: Home, canActivate: [authGuard] },
 
   {
     path: 'customer/bookings',
