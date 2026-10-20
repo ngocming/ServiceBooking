@@ -1,55 +1,58 @@
 import { Routes } from '@angular/router';
-import { Bookings } from './pages/bookings/bookings';
-import { Login } from './pages/login/login';
-import { Register } from './pages/register/register';
-import { Forbidden } from './pages/forbidden/forbidden';
-import { Services } from './pages/services/services';
-import { CreateService } from './pages/services/create-service/create-service';
 import { authGuard } from './guards/auth-guard';
 import { roleGuard } from './guards/role-guard';
-import { ServiceDetail } from './pages/services/service-detail/service-detail';
-import { Home } from './pages/home/home';
 
 export const routes: Routes = [
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
-  { path: 'forbidden', component: Forbidden },
-  { path: 'home', component: Home, canActivate: [authGuard] },
-
+  {
+    path: 'login',
+    loadComponent: () => import('./pages/login/login').then(m => m.Login)
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./pages/register/register').then(m => m.Register)
+  },
+  {
+    path: 'forbidden',
+    loadComponent: () => import('./pages/forbidden/forbidden').then(m => m.Forbidden)
+  },
+  {
+    path: 'home',
+    loadComponent: () => import('./pages/home/home').then(m => m.Home),
+    canActivate: [authGuard]
+  },
   {
     path: 'customer/bookings',
-    component: Bookings,
+    loadComponent: () => import('./pages/bookings/bookings').then(m => m.Bookings),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Customer'] }
   },
-
   {
     path: 'provider/bookings',
-    component: Bookings,
+    loadComponent: () => import('./pages/bookings/bookings').then(m => m.Bookings),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Provider'] }
   },
   {
     path: 'provider/services/create',
-    component: CreateService,
+    loadComponent: () => import('./pages/services/create-service/create-service').then(m => m.CreateService),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Provider'] }
   },
   {
     path: 'provider/services',
-    component: Services,
+    loadComponent: () => import('./pages/services/services').then(m => m.Services),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Provider'] }
   },
   {
     path: 'customer/services',
-    component: Services,
+    loadComponent: () => import('./pages/services/services').then(m => m.Services),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Customer'] }
   },
   {
     path: 'services/:id',
-    component: ServiceDetail,
+    loadComponent: () => import('./pages/services/service-detail/service-detail').then(m => m.ServiceDetail),
     canActivate: [authGuard, roleGuard],
     data: { roles: ['Customer', 'Provider'] }
   },

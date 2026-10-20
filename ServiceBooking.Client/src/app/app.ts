@@ -15,7 +15,6 @@ export class App {
   protected readonly serverStatus = inject(ServerStatus);
   private router = inject(Router);
 
-  // Ẩn navbar trên trang login và register
   private currentUrl = signal('');
   private readonly NO_NAVBAR_ROUTES = ['/login', '/register', '/forbidden'];
 

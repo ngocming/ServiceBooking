@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface LoginResponse {
     id: number;
@@ -12,7 +13,7 @@ export interface LoginResponse {
 
 @Service()
 export class Auth {
-    private baseUrl = 'http://localhost:5128/api/auth';
+    private baseUrl = `${environment.apiUrl}/auth`;
     private http = inject(HttpClient);
     login(request: any): Observable<LoginResponse> {
         return this.http.post<LoginResponse>(`${this.baseUrl}/login`, request);

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface BookingItem {
     id: number;
@@ -24,7 +25,7 @@ export interface CreateBookingDto {
 
 @Service()
 export class Booking {
-    private baseUrl = 'http://localhost:5128/api/booking';
+    private baseUrl = `${environment.apiUrl}/booking`;
 
     private http = inject(HttpClient);
 

@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface ProviderServiceItem {
   id: number;
@@ -24,7 +25,7 @@ export interface CreateProviderServiceDTO {
   providedIn: 'root'
 })
 export class ProviderServices {
-  private baseUrl = 'http://localhost:5128/api/pvdservices';
+  private baseUrl = `${environment.apiUrl}/pvdservices`;
   private http = inject(HttpClient);
   getAllProviderServices(): Observable<ProviderServiceItem[]> {
     return this.http.get<ProviderServiceItem[]>(this.baseUrl);

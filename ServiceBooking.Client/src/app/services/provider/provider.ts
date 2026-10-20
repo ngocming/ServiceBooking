@@ -1,6 +1,7 @@
 import { Service, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 
 export interface ProviderProfile {
@@ -18,7 +19,7 @@ export interface ProviderProfile {
 @Service()
 export class Provider {
 
-    private baseUrl = 'http://localhost:5128/api/providers';
+    private baseUrl = `${environment.apiUrl}/providers`;
     private http = inject(HttpClient);
     
     getMyProfile(): Observable<ProviderProfile> {
