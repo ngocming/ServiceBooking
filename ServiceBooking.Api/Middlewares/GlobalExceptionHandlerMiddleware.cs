@@ -28,7 +28,16 @@ public class GlobalExceptionHandlerMiddleware
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Unhandled exception occurred: {Message}", ex.Message);
+            try
+            {
+                _logger.LogError(ex, "Unhandled exception occurred: {Message}", ex.Message);
+            }
+            catch
+            {
+                // Fallback to Console write if logger provider fails
+                Console.Error.WriteLine($"[GlobalExceptionHandler] Unhandled exception: {ex}");
+            }
+
             await HandleExceptionAsync(context, ex);
         }
     }

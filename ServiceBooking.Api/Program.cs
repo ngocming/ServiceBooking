@@ -10,6 +10,12 @@ using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure safe logging (Console and Debug only, avoid Windows EventLog permission issues)
+builder.Logging.ClearProviders();
+builder.Logging.AddConfiguration(builder.Configuration.GetSection("Logging"));
+builder.Logging.AddConsole();
+builder.Logging.AddDebug();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
     options =>
@@ -104,8 +110,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
+else
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors("CorsPolicy");
 
