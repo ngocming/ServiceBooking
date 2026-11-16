@@ -441,12 +441,3 @@ npm start
 
 ---
 
-## 9. Tài khoản mẫu mặc định
-
-Hệ thống tự động khởi tạo tài khoản quản trị viên:
-- **Tài khoản**: `admin`
-- **Email**: `admin@admin.com`
-- **Mật khẩu**: `Admin@123`
-- **Vai trò**: `Admin`
-
-Người dùng có thể đăng ký trực tiếp các tài khoản mới với vai trò **Customer** hoặc **Provider** ngay trên giao diện `/register`.
