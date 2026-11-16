@@ -79,7 +79,13 @@ public class BookingService : IBookingService
 
         await _dbContext.SaveChangesAsync();
 
-        return MapToDto(booking);
+        var savedBooking = await _dbContext.Bookings
+            .Include(b => b.ProviderService)
+            .Include(b => b.Provider).ThenInclude(p => p.User)
+            .Include(b => b.Customer)
+            .FirstAsync(b => b.Id == booking.Id);
+
+        return MapToDto(savedBooking);
     }
 
     public async Task<IEnumerable<BookingResponseDto>>
@@ -263,6 +269,41 @@ public class BookingService : IBookingService
         }
 
         booking.Status = BookingStatus.Completed;
+
+        await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task RejectAsync(
+        int userId,
+        int bookingId)
+    {
+        var booking = await _dbContext.Bookings
+            .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+        if (booking == null)
+        {
+            throw new KeyNotFoundException(
+                "Booking not found.");
+        }
+
+        var isProvider = await _dbContext.Providers
+            .AnyAsync(p =>
+                p.Id == booking.ProviderId &&
+                p.UserId == userId);
+
+        if (!isProvider)
+        {
+            throw new UnauthorizedAccessException(
+                "Only the provider can reject this booking.");
+        }
+
+        if (booking.Status != BookingStatus.Pending)
+        {
+            throw new InvalidOperationException(
+                "Only pending bookings can be rejected.");
+        }
+
+        booking.Status = BookingStatus.Rejected;
 
         await _dbContext.SaveChangesAsync();
     }

@@ -1,0 +1,125 @@
+<div class="profile-page">
+  <div class="profile-header">
+    <div class="header-content">
+      <h1 class="page-title">Hồ sơ nhà cung cấp</h1>
+      <p class="page-subtitle">Quản lý thông tin doanh nghiệp, thông tin liên hệ và trạng thái hoạt động của bạn</p>
+    </div>
+  </div>
+
+  <div class="profile-content">
+    @if (loading()) {
+      <div class="state-container loading-state">
+        <div class="spinner-ring"></div>
+        <p>Đang tải thông tin hồ sơ...</p>
+      </div>
+    } @else if (errorMessage() && !profile()) {
+      <div class="state-container error-state">
+        <h3>Đã xảy ra lỗi</h3>
+        <p>{{ errorMessage() }}</p>
+        <button class="btn-retry" (click)="loadProfile()">Thử lại</button>
+      </div>
+    } @else {
+      <div class="profile-card">
+        @if (successMessage()) {
+          <div class="alert alert-success">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            {{ successMessage() }}
+          </div>
+        }
+
+        @if (errorMessage()) {
+          <div class="alert alert-error">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {{ errorMessage() }}
+          </div>
+        }
+
+        <form [formGroup]="profileForm" (ngSubmit)="onSubmit()" class="form-container">
+          <div class="form-grid">
+            <!-- Tên hiển thị -->
+            <div class="form-group full-width">
+              <label for="displayName" class="form-label">Tên thương hiệu / Nhà cung cấp <span class="required">*</span></label>
+              <input
+                id="displayName"
+                type="text"
+                formControlName="displayName"
+                class="form-input"
+                placeholder="Ví dụ: Salon Tóc Luxury, Dịch Vụ Sửa Chữa Minh Hoàng..."
+              />
+              @if (profileForm.get('displayName')?.touched && profileForm.get('displayName')?.invalid) {
+                <span class="field-error">Vui lòng nhập tên hiển thị</span>
+              }
+            </div>
+
+            <!-- Số điện thoại -->
+            <div class="form-group">
+              <label for="phone" class="form-label">Số điện thoại liên hệ <span class="required">*</span></label>
+              <input
+                id="phone"
+                type="text"
+                formControlName="phone"
+                class="form-input"
+                placeholder="0912 345 678"
+              />
+              @if (profileForm.get('phone')?.touched && profileForm.get('phone')?.invalid) {
+                <span class="field-error">Số điện thoại không hợp lệ</span>
+              }
+            </div>
+
+            <!-- Trạng thái nhận lịch -->
+            <div class="form-group">
+              <label class="form-label">Trạng thái nhận lịch</label>
+              <div class="toggle-wrap">
+                <label class="switch">
+                  <input type="checkbox" formControlName="isAvailable">
+                  <span class="slider round"></span>
+                </label>
+                <span class="toggle-text">
+                  {{ profileForm.get('isAvailable')?.value ? 'Đang nhận lịch hẹn' : 'Tạm dừng nhận lịch hẹn' }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Địa chỉ -->
+            <div class="form-group full-width">
+              <label for="address" class="form-label">Địa chỉ kinh doanh / làm việc <span class="required">*</span></label>
+              <input
+                id="address"
+                type="text"
+                formControlName="address"
+                class="form-input"
+                placeholder="Ví dụ: 123 Đường Nguyễn Trãi, Quận 1, TP. Hồ Chí Minh"
+              />
+              @if (profileForm.get('address')?.touched && profileForm.get('address')?.invalid) {
+                <span class="field-error">Vui lòng nhập địa chỉ</span>
+              }
+            </div>
+
+            <!-- Giới thiệu / Mô tả -->
+            <div class="form-group full-width">
+              <label for="description" class="form-label">Giới thiệu dịch vụ & chuyên môn</label>
+              <textarea
+                id="description"
+                rows="4"
+                formControlName="description"
+                class="form-textarea"
+                placeholder="Mô tả kinh nghiệm, trang thiết bị, cam kết chất lượng của bạn..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-submit" [disabled]="saving()">
+              @if (saving()) {
+                <span class="spinner-sm"></span>
+                Đang lưu thay đổi...
+              } @else {
+                Lưu hồ sơ
+              }
+            </button>
+          </div>
+        </form>
+      </div>
+    }
+  </div>
+</div>

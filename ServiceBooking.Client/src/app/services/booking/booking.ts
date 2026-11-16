@@ -60,6 +60,12 @@ export class Booking {
             {}
         );
     }
+    rejectBooking(id: number): Observable<void> {
+        return this.http.patch<void>(
+            `${this.baseUrl}/${id}/reject`,
+            {}
+        );
+    }
     getUserRole(): string {
         const user = localStorage.getItem('user');
         return user ? JSON.parse(user).role : '';

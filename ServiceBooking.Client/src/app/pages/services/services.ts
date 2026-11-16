@@ -1,11 +1,12 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { ProviderServices, ProviderServiceItem } from '../../services/provider_services/provider-services';
 
 @Component({
   selector: 'app-services',
-  imports: [RouterLink, DecimalPipe],
+  imports: [RouterLink, FormsModule, DecimalPipe],
   templateUrl: './services.html',
   styleUrl: './services.css',
 })
@@ -15,10 +16,30 @@ export class Services implements OnInit {
   errorMessage = signal('');
   deletingId = signal<number | null>(null);
 
+  searchQuery = signal('');
+  priceFilter = signal('all');
+
   userRole = '';
 
   private providerService = inject(ProviderServices);
   private router = inject(Router);
+
+  filteredServices = computed(() => {
+    let list = this.services();
+    const q = this.searchQuery().toLowerCase().trim();
+    if (q) {
+      list = list.filter(s => s.name.toLowerCase().includes(q) || (s.description || '').toLowerCase().includes(q));
+    }
+    const pf = this.priceFilter();
+    if (pf === 'under100k') {
+      list = list.filter(s => s.price < 100000);
+    } else if (pf === '100k-500k') {
+      list = list.filter(s => s.price >= 100000 && s.price <= 500000);
+    } else if (pf === 'over500k') {
+      list = list.filter(s => s.price > 500000);
+    }
+    return list;
+  });
 
   ngOnInit(): void {
     const raw = localStorage.getItem('user');
@@ -63,5 +84,19 @@ export class Services implements OnInit {
         alert('Xóa dịch vụ thất bại. Vui lòng thử lại.');
       }
     });
+  }
+
+  bookService(id: number, event: Event): void {
+    event.stopPropagation();
+    event.preventDefault();
+    this.router.navigate(['/services', id]);
+  }
+
+  onSearchChange(val: string): void {
+    this.searchQuery.set(val);
+  }
+
+  onPriceFilterChange(val: string): void {
+    this.priceFilter.set(val);
   }
 }

@@ -27,6 +27,7 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
                 Description = pso.Description,
                 Price = pso.Price,
                 DurationMinutes = pso.DurationMinutes,
+                IsAvailable = pso.IsAvailable,
                 CreatedAt = pso.CreatedAt
             })
             .ToListAsync();
@@ -44,6 +45,7 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
                 Description = pso.Description,
                 Price = pso.Price,
                 DurationMinutes = pso.DurationMinutes,
+                IsAvailable = pso.IsAvailable,
                 CreatedAt = pso.CreatedAt
             })
             .FirstOrDefaultAsync();
@@ -76,7 +78,44 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
             Description = providerService.Description,
             Price = providerService.Price,
             DurationMinutes = providerService.DurationMinutes,
+            IsAvailable = providerService.IsAvailable,
             CreatedAt = providerService.CreatedAt
+        };
+    }
+
+    public async Task<ProviderServiceResponseDto?> UpdateAsync(int userId, int id, UpdateProviderServiceDto dto)
+    {
+        var provider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
+        if (provider == null)
+        {
+            return null;
+        }
+
+        var serviceOffering = await _context.ProviderServices
+            .FirstOrDefaultAsync(pso => pso.Id == id && pso.ProviderId == provider.Id);
+        if (serviceOffering == null)
+        {
+            return null;
+        }
+
+        serviceOffering.Name = dto.Name;
+        serviceOffering.Description = dto.Description;
+        serviceOffering.Price = dto.Price;
+        serviceOffering.DurationMinutes = dto.DurationMinutes;
+        serviceOffering.IsAvailable = dto.IsAvailable;
+
+        await _context.SaveChangesAsync();
+
+        return new ProviderServiceResponseDto
+        {
+            Id = serviceOffering.Id,
+            ProviderId = serviceOffering.ProviderId,
+            Name = serviceOffering.Name,
+            Description = serviceOffering.Description,
+            Price = serviceOffering.Price,
+            DurationMinutes = serviceOffering.DurationMinutes,
+            IsAvailable = serviceOffering.IsAvailable,
+            CreatedAt = serviceOffering.CreatedAt
         };
     }
 
@@ -114,6 +153,7 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
             Description = pso.Description,
             Price = pso.Price,
             DurationMinutes = pso.DurationMinutes,
+            IsAvailable = pso.IsAvailable,
             CreatedAt = pso.CreatedAt
         }).ToList();
         return providerServiceDtos;

@@ -27,6 +27,10 @@ public interface IBookingService
         int userId,
         int bookingId);
 
+    Task RejectAsync(
+        int userId,
+        int bookingId);
+
     Task<IEnumerable<BookingResponseDto>> GetProviderBookingsAsync(
     int userId);
 }

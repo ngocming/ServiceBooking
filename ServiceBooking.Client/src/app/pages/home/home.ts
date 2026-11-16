@@ -17,7 +17,7 @@ export class Home implements OnInit {
       if (user.role === 'Customer') {
         this.router.navigate(['/customer/services']);
       } else if (user.role === 'Provider') {
-        this.router.navigate(['/provider/services']);
+        this.router.navigate(['/provider/dashboard']);
       } else {
         this.router.navigate(['/login']);
       }

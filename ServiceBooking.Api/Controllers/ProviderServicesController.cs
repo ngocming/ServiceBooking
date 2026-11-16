@@ -57,6 +57,22 @@ public class ProviderServicesController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = providerService.Id }, providerService);
     }
 
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<ActionResult<ProviderServiceResponseDto>> Update(int id, [FromBody] UpdateProviderServiceDto dto)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var result = await _providerServiceOfferingService.UpdateAsync(userId, id, dto);
+        if (result == null)
+            return NotFound("Provider service not found or you do not have permission to update it.");
+        return Ok(result);
+    }
+
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<ActionResult> Delete(int id)

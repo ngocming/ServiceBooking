@@ -111,6 +111,19 @@ public class BookingController : ControllerBase
         return Ok(new { message = "Booking completed successfully." });
     }
 
+    [HttpPatch("{id:int}/reject")]
+    public async Task<IActionResult> RejectBooking(int id)
+    {
+        var userId = GetCurrentUserId();
+        if (userId <= 0)
+        {
+            return Unauthorized("Invalid user token.");
+        }
+
+        await _bookingService.RejectAsync(userId, id);
+        return Ok(new { message = "Booking rejected successfully." });
+    }
+
     [HttpGet("provider/bookings")]
     public async Task<ActionResult<IEnumerable<BookingResponseDto>>> GetProviderBookings()
     {

@@ -21,6 +21,18 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'provider/dashboard',
+    loadComponent: () => import('./pages/provider-dashboard/provider-dashboard').then(m => m.ProviderDashboard),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Provider'] }
+  },
+  {
+    path: 'provider/profile',
+    loadComponent: () => import('./pages/provider-profile/provider-profile').then(m => m.ProviderProfilePage),
+    canActivate: [authGuard, roleGuard],
+    data: { roles: ['Provider'] }
+  },
+  {
     path: 'customer/bookings',
     loadComponent: () => import('./pages/bookings/bookings').then(m => m.Bookings),
     canActivate: [authGuard, roleGuard],

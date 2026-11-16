@@ -94,6 +94,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
+await DbSeeder.SeedAsync(app.Services);
 
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 

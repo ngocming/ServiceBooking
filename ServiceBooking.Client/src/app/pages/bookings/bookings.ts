@@ -95,6 +95,16 @@ export class Bookings implements OnInit {
       }
     });
   }
+  onReject(id: number) {
+    this.bookingService.rejectBooking(id).subscribe({
+      next: () => {
+        this.loadBookings();
+      },
+      error: (err) => {
+        console.error('Error rejecting booking:', err);
+      }
+    });
+  }
   onComplete(id: number) {
     this.bookingService.completeBooking(id).subscribe({
       next: () => {

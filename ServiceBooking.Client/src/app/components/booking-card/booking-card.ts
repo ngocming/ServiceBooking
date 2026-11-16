@@ -14,6 +14,7 @@ export class BookingCard {
   @Output() cancelBooking = new EventEmitter<number>();
   @Output() confirmBooking = new EventEmitter<number>();
   @Output() completeBooking = new EventEmitter<number>();
+  @Output() rejectBooking = new EventEmitter<number>();
 
   onCancel() {
     this.cancelBooking.emit(this.booking.id);
@@ -23,5 +24,8 @@ export class BookingCard {
   }
   onComplete() {
     this.completeBooking.emit(this.booking.id);
+  }
+  onReject() {
+    this.rejectBooking.emit(this.booking.id);
   }
 }

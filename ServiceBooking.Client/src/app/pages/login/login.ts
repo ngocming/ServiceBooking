@@ -45,9 +45,9 @@ export class Login {
           role: response.role
         }));
         if (response.role === 'Customer') {
-          this.router.navigate(['/customer/bookings']);
+          this.router.navigate(['/customer/services']);
         } else if (response.role === 'Provider') {
-          this.router.navigate(['/provider/bookings']);
+          this.router.navigate(['/provider/dashboard']);
         } else if (response.role === 'Admin') {
           this.router.navigate(['/admin']);
         }

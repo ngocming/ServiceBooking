@@ -76,7 +76,7 @@
   border: 1px solid #bbf7d0;
 }
 
-.status-badge.status-cancelled, .status-badge.status-canceled {
+.status-badge.status-cancelled, .status-badge.status-canceled, .status-badge.status-rejected {
   background-color: #fee2e2;
   color: #b91c1c;
   border: 1px solid #fecaca;
@@ -184,12 +184,36 @@
 .msg-pending { color: #d97706; }
 .msg-confirmed { color: #059669; }
 .msg-completed { color: #6366f1; }
+.msg-rejected { color: #dc2626; }
 .msg-cancelled { color: #94a3b8; }
 
 .action-buttons {
   display: flex;
   gap: 0.625rem;
   align-items: center;
+}
+
+.btn-reject {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  padding: 0.6rem 1.125rem;
+  border-radius: 10px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-reject:hover {
+  background: #ffe4e6;
+  border-color: #fda4af;
+  color: #be123c;
+  box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.15);
+}
+
+.btn-reject:active {
+  transform: translateY(1px);
 }
 
 .btn-cancel {

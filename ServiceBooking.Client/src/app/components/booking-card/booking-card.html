@@ -71,6 +71,8 @@
       <span class="msg-confirmed">Đã xác nhận</span>
       } @else if (booking.status === 'Completed') {
       <span class="msg-completed">Đã hoàn thành</span>
+      } @else if (booking.status === 'Rejected') {
+      <span class="msg-rejected">Đã từ chối</span>
       } @else if (booking.status === 'Cancelled') {
       <span class="msg-cancelled">Đã hủy</span>
       }
@@ -81,10 +83,14 @@
         <button class="btn-confirm" (click)="onConfirm()">
           Xác nhận
         </button>
-        }
+        <button class="btn-reject" (click)="onReject()">
+          Từ chối
+        </button>
+        } @else {
         <button class="btn-cancel" (click)="onCancel()">
           Hủy
         </button>
+        }
       }
       @if (booking.status === 'Confirmed' && userRole === 'Provider') {
       <button class="btn-complete" (click)="onComplete()">

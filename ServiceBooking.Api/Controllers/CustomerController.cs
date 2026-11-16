@@ -37,6 +37,19 @@ public class CustomerController : ControllerBase
         return Ok(profile);
     }
 
+    [HttpGet("me")]
+    public async Task<ActionResult<CustomerResponseDto>> GetMe()
+    {
+        var userId = GetCurrentUserId();
+        if (userId <= 0)
+            return Unauthorized("Invalid User Token.");
+
+        var profile = await _customerService.GetMyProfileAsync(userId);
+        if (profile == null)
+            return NotFound("Customer profile not found");
+        return Ok(profile);
+    }
+
     [HttpPost("create")]
     public async Task<ActionResult<CustomerResponseDto>> Create()
     {

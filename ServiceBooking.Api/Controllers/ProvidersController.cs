@@ -20,7 +20,7 @@ public class ProvidersController : ControllerBase
 
     [HttpGet("profile")]
     [Authorize(Roles = "Admin,Provider")]
-    public async Task<ActionResult<List<ProviderResponseDto>>> GetProfile()
+    public async Task<ActionResult<ProviderResponseDto>> GetProfile()
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (!int.TryParse(userIdClaim, out var userId))
@@ -28,8 +28,32 @@ public class ProvidersController : ControllerBase
             return Unauthorized("Invalid User ID.");
         }
 
-        var providers = await _providerService.GetByUserIdAsync(userId);
-        return Ok(providers);
+        var provider = await _providerService.GetByUserIdAsync(userId);
+        if (provider == null)
+        {
+            return NotFound("Provider profile not found.");
+        }
+        return Ok(provider);
+    }
+
+    [HttpPut("profile")]
+    [Authorize(Roles = "Provider")]
+    public async Task<ActionResult<ProviderResponseDto>> UpdateProfile([FromBody] UpdateProviderDto dto)
+    {
+        var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (!int.TryParse(userIdClaim, out var userId))
+        {
+            return Unauthorized("Invalid User ID.");
+        }
+
+        var existingProvider = await _providerService.GetByUserIdAsync(userId);
+        if (existingProvider == null)
+        {
+            return NotFound("Provider profile not found.");
+        }
+
+        var updated = await _providerService.UpdateAsync(existingProvider.Id, dto);
+        return Ok(updated);
     }
 
 
@@ -69,7 +93,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Provider")]
     public async Task<ActionResult<ProviderResponseDto>> Update(int id, [FromBody] UpdateProviderDto dto)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);

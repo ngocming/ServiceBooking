@@ -14,6 +14,8 @@ public class ProviderService
 
     public int DurationMinutes { get; set; }
 
+    public bool IsAvailable { get; set; } = true;
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public Provider Provider { get; set; } = null!;
