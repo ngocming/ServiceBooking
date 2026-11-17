@@ -1,5 +1,6 @@
 using Xunit;
 using Microsoft.Extensions.Configuration;
+using ServiceBooking.Api.Data;
 using ServiceBooking.Api.DTOs.Auth;
 using ServiceBooking.Api.Models;
 using ServiceBooking.Api.Services.Implementations;
