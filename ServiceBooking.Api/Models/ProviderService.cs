@@ -6,9 +6,13 @@ public class ProviderService
 
     public int ProviderId { get; set; }
 
+    public int? CategoryId { get; set; }
+
     public string Name { get; set; } = string.Empty;
 
     public string Description { get; set; } = string.Empty;
+
+    public string? ImageUrl { get; set; }
 
     public decimal Price { get; set; }
 
@@ -18,5 +22,8 @@ public class ProviderService
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+    // Navigation properties
     public Provider Provider { get; set; } = null!;
+
+    public ServiceCategory? Category { get; set; }
 }

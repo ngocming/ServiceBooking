@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Provider> Providers { get; set; }
     public DbSet<Customer> Customers { get; set; }
     public DbSet<ProviderService> ProviderServices { get; set; }
+    public DbSet<ServiceCategory> ServiceCategories { get; set; }
 
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<BookingStatusHistory> BookingStatusHistories { get; set; }
@@ -46,6 +47,16 @@ public class AppDbContext : DbContext
             .ToTable("ProviderServices")
             .Property(ps => ps.Price)
             .HasPrecision(18, 2);
+
+        modelBuilder.Entity<ProviderService>()
+            .HasOne(s => s.Category)
+            .WithMany(c => c.Services)
+            .HasForeignKey(s => s.CategoryId)
+            .OnDelete(DeleteBehavior.SetNull);
+
+        modelBuilder.Entity<ServiceCategory>()
+            .HasIndex(c => c.Slug)
+            .IsUnique();
 
         modelBuilder.Entity<Customer>()
             .HasOne(c => c.User)

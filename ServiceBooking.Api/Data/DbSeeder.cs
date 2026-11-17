@@ -50,6 +50,24 @@ public static class DbSeeder
                 await dbContext.SaveChangesAsync();
                 Console.WriteLine($"[DbSeeder] Default admin user created successfully: {adminUsername} ({adminEmail})");
             }
+
+            // Seed initial automotive service categories if none exist
+            if (!await dbContext.ServiceCategories.AnyAsync())
+            {
+                var categories = new List<ServiceCategory>
+                {
+                    new() { Name = "Rửa xe & Chăm sóc xe", Slug = "rua-xe-cham-soc", DisplayOrder = 1, Description = "Rửa xe chuyên sâu, dọn nội thất, đánh bóng, phủ ceramic" },
+                    new() { Name = "Bảo dưỡng định kỳ", Slug = "bao-duong-dinh-ky", DisplayOrder = 2, Description = "Thay dầu, lọc gió, kiểm tra phanh, bảo dưỡng toàn diện" },
+                    new() { Name = "Sửa chữa nhanh", Slug = "sua-chua-nhanh", DisplayOrder = 3, Description = "Sửa điện xe, điều hòa, máy gầm, ắc quy lưu động" },
+                    new() { Name = "Cứu hộ 24/7", Slug = "cuu-ho-247", DisplayOrder = 4, Description = "Cứu hộ khẩn cấp, kích bình ắc quy, vá lốp tận nơi" },
+                    new() { Name = "Độ xe & Phụ kiện", Slug = "do-xe-phu-kien", DisplayOrder = 5, Description = "Camera hành trình, màn hình android, dán phim cách nhiệt, âm thanh" },
+                    new() { Name = "Kiểm tra & Đăng kiểm", Slug = "kiem-tra-dang-kiem", DisplayOrder = 6, Description = "Hỗ trợ đăng kiểm xe, kiểm tra tình trạng tổng quát" }
+                };
+
+                dbContext.ServiceCategories.AddRange(categories);
+                await dbContext.SaveChangesAsync();
+                Console.WriteLine("[DbSeeder] Initial automotive service categories seeded successfully.");
+            }
         }
         catch (Exception ex)
         {
