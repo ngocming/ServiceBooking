@@ -1,4 +1,5 @@
 using ServiceBooking.Api.Data;
+using ServiceBooking.Api.DTOs.Common;
 using ServiceBooking.Api.DTOs.ProviderService;
 using ServiceBooking.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,91 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
     {
         _context = context;
     }
+
+    public async Task<PagedResult<ProviderServiceResponseDto>> GetFilteredAsync(ServiceFilterDto filter)
+    {
+        var query = _context.ProviderServices
+            .Include(pso => pso.Category)
+            .Include(pso => pso.Provider)
+            .AsQueryable();
+
+        if (filter.IsAvailableOnly == true)
+        {
+            query = query.Where(s => s.IsAvailable);
+        }
+
+        if (filter.CategoryId.HasValue)
+        {
+            query = query.Where(s => s.CategoryId == filter.CategoryId.Value);
+        }
+
+        if (filter.ProviderId.HasValue)
+        {
+            query = query.Where(s => s.ProviderId == filter.ProviderId.Value);
+        }
+
+        if (filter.MinPrice.HasValue)
+        {
+            query = query.Where(s => s.Price >= filter.MinPrice.Value);
+        }
+
+        if (filter.MaxPrice.HasValue)
+        {
+            query = query.Where(s => s.Price <= filter.MaxPrice.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.SearchTerm))
+        {
+            var term = filter.SearchTerm.Trim();
+            query = query.Where(s =>
+                s.Name.Contains(term) ||
+                s.Description.Contains(term) ||
+                (s.Provider.DisplayName != null && s.Provider.DisplayName.Contains(term)) ||
+                (s.Category != null && s.Category.Name.Contains(term)));
+        }
+
+        query = filter.SortBy?.ToLowerInvariant() switch
+        {
+            "price_asc" => query.OrderBy(s => s.Price),
+            "price_desc" => query.OrderByDescending(s => s.Price),
+            "name_asc" => query.OrderBy(s => s.Name),
+            "duration_asc" => query.OrderBy(s => s.DurationMinutes),
+            _ => query.OrderByDescending(s => s.CreatedAt)
+        };
+
+        var pageNumber = filter.PageNumber > 0 ? filter.PageNumber : 1;
+        var pageSize = filter.PageSize > 0 ? (filter.PageSize > 50 ? 50 : filter.PageSize) : 10;
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .Select(pso => new ProviderServiceResponseDto
+            {
+                Id = pso.Id,
+                ProviderId = pso.ProviderId,
+                ProviderName = pso.Provider != null ? (pso.Provider.DisplayName ?? (pso.Provider.User != null ? pso.Provider.User.Username : string.Empty)) : string.Empty,
+                CategoryId = pso.CategoryId,
+                CategoryName = pso.Category != null ? pso.Category.Name : null,
+                Name = pso.Name,
+                Description = pso.Description,
+                ImageUrl = pso.ImageUrl,
+                Price = pso.Price,
+                DurationMinutes = pso.DurationMinutes,
+                IsAvailable = pso.IsAvailable,
+                CreatedAt = pso.CreatedAt
+            })
+            .ToListAsync();
+
+        return new PagedResult<ProviderServiceResponseDto>
+        {
+            Items = items,
+            PageNumber = pageNumber,
+            PageSize = pageSize,
+            TotalCount = totalCount
+        };
+    }
     
     public async Task<List<ProviderServiceResponseDto>> GetByProviderIdAsync(int providerId)
     {
@@ -25,7 +111,7 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
             {
                 Id = pso.Id,
                 ProviderId = pso.ProviderId,
-                ProviderName = pso.Provider.DisplayName ?? pso.Provider.User.Username,
+                ProviderName = pso.Provider != null ? (pso.Provider.DisplayName ?? (pso.Provider.User != null ? pso.Provider.User.Username : string.Empty)) : string.Empty,
                 CategoryId = pso.CategoryId,
                 CategoryName = pso.Category != null ? pso.Category.Name : null,
                 Name = pso.Name,
@@ -49,7 +135,7 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
             {
                 Id = pso.Id,
                 ProviderId = pso.ProviderId,
-                ProviderName = pso.Provider.DisplayName ?? pso.Provider.User.Username,
+                ProviderName = pso.Provider != null ? (pso.Provider.DisplayName ?? (pso.Provider.User != null ? pso.Provider.User.Username : string.Empty)) : string.Empty,
                 CategoryId = pso.CategoryId,
                 CategoryName = pso.Category != null ? pso.Category.Name : null,
                 Name = pso.Name,

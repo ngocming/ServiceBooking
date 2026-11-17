@@ -1,3 +1,4 @@
+using ServiceBooking.Api.DTOs.Common;
 using ServiceBooking.Api.DTOs.ProviderService;
 using ServiceBooking.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -32,10 +33,10 @@ public class ProviderServicesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<ProviderServiceResponseDto>>> GetAll()
+    public async Task<ActionResult<PagedResult<ProviderServiceResponseDto>>> GetAll([FromQuery] ServiceFilterDto? filter)
     {
-        var providerServices = await _providerServiceOfferingService.GetAllAsync() ?? new List<ProviderServiceResponseDto>();
-        return Ok(providerServices);
+        var result = await _providerServiceOfferingService.GetFilteredAsync(filter ?? new ServiceFilterDto());
+        return Ok(result);
     }
 
     [HttpGet("{id:int}")]
