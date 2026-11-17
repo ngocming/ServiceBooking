@@ -26,6 +26,40 @@ export interface UpdateProviderDto {
   isAvailable?: boolean;
 }
 
+export interface ProviderScheduleItem {
+  dayOfWeek: number;
+  dayName: string;
+  isAvailable: boolean;
+  startTime: string;
+  endTime: string;
+  slotDurationMinutes: number;
+}
+
+export interface ProviderOfferingItem {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  durationMinutes: number;
+  categoryId?: number;
+  categoryName?: string;
+  imageUrl?: string;
+  isAvailable: boolean;
+}
+
+export interface ProviderPublicProfile {
+  id: number;
+  displayName: string;
+  description?: string;
+  phone?: string;
+  address?: string;
+  isAvailable: boolean;
+  createdAt: string;
+  completedBookingsCount: number;
+  services: ProviderOfferingItem[];
+  weeklySchedule: ProviderScheduleItem[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -39,5 +73,9 @@ export class Provider {
 
   updateMyProfile(dto: UpdateProviderDto): Observable<ProviderProfile> {
     return this.http.put<ProviderProfile>(`${this.baseUrl}/profile`, dto);
+  }
+
+  getPublicProfile(id: number): Observable<ProviderPublicProfile> {
+    return this.http.get<ProviderPublicProfile>(`${this.baseUrl}/${id}/public`);
   }
 }

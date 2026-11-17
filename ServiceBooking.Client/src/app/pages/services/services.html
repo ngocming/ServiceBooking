@@ -1,55 +1,115 @@
 <div class="services-page">
 
+  <!-- Header -->
   <div class="services-header">
     <div class="header-content">
       <div class="header-text">
         @if (userRole === 'Provider') {
-          <h1 class="page-title">Dịch vụ của tôi</h1>
-          <p class="page-subtitle">Quản lý và theo dõi các dịch vụ bạn đang cung cấp</p>
+          <h1 class="page-title">Quản lý Dịch vụ Gara</h1>
+          <p class="page-subtitle">Theo dõi, cập nhật và mở rộng gói dịch vụ chăm sóc ô tô của bạn</p>
         } @else {
-          <h1 class="page-title">Khám phá dịch vụ</h1>
-          <p class="page-subtitle">Tìm kiếm và đặt lịch dịch vụ phù hợp với bạn</p>
+          <h1 class="page-title">Dịch Vụ Chăm Sóc & Bảo Dưỡng Ô Tô</h1>
+          <p class="page-subtitle">Khám phá các trung tâm chăm sóc xe chuyên nghiệp, đặt lịch nhanh chóng và an tâm tuyệt đối</p>
         }
       </div>
       @if (userRole === 'Provider') {
         <button class="btn-create" (click)="navigateToCreate()">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Tạo dịch vụ mới
+          Thêm dịch vụ mới
         </button>
       }
     </div>
   </div>
 
-  @if (userRole === 'Customer') {
+  <!-- Category Filter Pills -->
+  <div class="categories-bar">
+    <div class="categories-scroll">
+      <button 
+        type="button" 
+        class="category-pill" 
+        [class.active]="selectedCategoryId() === null"
+        (click)="selectCategory(null)">
+        <span class="pill-icon">✨</span>
+        <span class="pill-label">Tất cả</span>
+      </button>
+
+      @for (cat of categories(); track cat.id) {
+        <button 
+          type="button" 
+          class="category-pill" 
+          [class.active]="selectedCategoryId() === cat.id"
+          (click)="selectCategory(cat.id)">
+          @if (cat.slug.includes('rua-xe')) {
+            <span class="pill-icon">🚿</span>
+          } @else if (cat.slug.includes('bao-duong')) {
+            <span class="pill-icon">🔧</span>
+          } @else if (cat.slug.includes('do-xe')) {
+            <span class="pill-icon">🏎️</span>
+          } @else if (cat.slug.includes('sua-chua')) {
+            <span class="pill-icon">⚙️</span>
+          } @else if (cat.slug.includes('son')) {
+            <span class="pill-icon">🎨</span>
+          } @else {
+            <span class="pill-icon">🚗</span>
+          }
+          <span class="pill-label">{{ cat.name }}</span>
+          @if (cat.serviceCount > 0) {
+            <span class="pill-badge">{{ cat.serviceCount }}</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls -->
   <div class="filter-bar">
     <div class="search-wrapper">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input
         type="text"
         class="search-input"
-        placeholder="Tìm kiếm dịch vụ..."
+        placeholder="Tìm dịch vụ (rửa xe, phủ ceramic, thay dầu, bảo dưỡng...)"
         [ngModel]="searchQuery()"
         (ngModelChange)="onSearchChange($event)"
       />
     </div>
-    <div class="price-filter">
-      <label>Lọc theo giá:</label>
-      <select [ngModel]="priceFilter()" (ngModelChange)="onPriceFilterChange($event)" class="filter-select">
-        <option value="all">Tất cả</option>
-        <option value="under100k">Dưới 100,000 VNĐ</option>
-        <option value="100k-500k">100,000 – 500,000 VNĐ</option>
-        <option value="over500k">Trên 500,000 VNĐ</option>
-      </select>
+
+    <div class="filter-controls">
+      <div class="control-group">
+        <label>Mức giá:</label>
+        <select [ngModel]="priceFilter()" (ngModelChange)="onPriceFilterChange($event)" class="filter-select">
+          <option value="all">Tất cả mức giá</option>
+          <option value="under200k">Dưới 200,000 đ</option>
+          <option value="200k-500k">200,000 – 500,000 đ</option>
+          <option value="500k-2m">500,000 – 2,000,000 đ</option>
+          <option value="over2m">Trên 2,000,000 đ</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label>Sắp xếp:</label>
+        <select [ngModel]="sortOption()" (ngModelChange)="onSortChange($event)" class="filter-select">
+          <option value="newest">Mới nhất</option>
+          <option value="price_asc">Giá tăng dần</option>
+          <option value="price_desc">Giá giảm dần</option>
+          <option value="duration_asc">Thời gian ngắn nhất</option>
+        </select>
+      </div>
     </div>
   </div>
-  }
 
+  <!-- Results Summary -->
+  <div class="results-meta">
+    <span class="results-count">Hiển thị <strong>{{ services().length }}</strong> / <strong>{{ totalCount() }}</strong> dịch vụ</span>
+  </div>
+
+  <!-- Main Content -->
   <div class="services-content">
 
     @if (loading()) {
     <div class="state-container loading-state">
       <div class="spinner-ring"></div>
-      <p>Đang tải danh sách dịch vụ...</p>
+      <p>Đang tìm kiếm dịch vụ xe phù hợp...</p>
     </div>
 
     } @else if (errorMessage()) {
@@ -57,7 +117,7 @@
       <div class="state-icon error-icon">
         <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
       </div>
-      <h3>Đã xảy ra lỗi</h3>
+      <h3>Đã xảy ra lỗi kết nối</h3>
       <p class="error-text">{{ errorMessage() }}</p>
       <button class="btn-retry" (click)="loadServices()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.5"/></svg>
@@ -65,60 +125,75 @@
       </button>
     </div>
 
-    } @else if (filteredServices().length === 0) {
+    } @else if (services().length === 0) {
     <div class="state-container empty-state">
       <div class="state-icon empty-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       </div>
-      <h3>Chưa có dịch vụ nào</h3>
+      <h3>Không tìm thấy dịch vụ nào</h3>
       @if (userRole === 'Provider') {
-        <p>Bắt đầu tạo dịch vụ đầu tiên của bạn!</p>
+        <p>Bắt đầu tạo dịch vụ đầu tiên của gara bạn!</p>
         <button class="btn-create-empty" (click)="navigateToCreate()">Tạo dịch vụ ngay</button>
       } @else {
-        <p>Không tìm thấy dịch vụ phù hợp với bộ lọc.</p>
+        <p>Thử điều chỉnh từ khóa tìm kiếm hoặc lọc theo mức giá khác.</p>
+        <button class="btn-reset-filters" (click)="selectedCategoryId.set(null); searchQuery.set(''); priceFilter.set('all'); loadServices();">Xóa bộ lọc</button>
       }
     </div>
 
     } @else {
+    <!-- Services Grid -->
     <div class="services-grid">
-      @for (service of filteredServices(); track service.id) {
+      @for (service of services(); track service.id) {
       <div class="service-card" [class.unavailable-card]="!service.isAvailable">
 
-        <div class="card-top">
-          <div class="service-icon-wrap">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          </div>
+        <!-- Card Image Thumbnail -->
+        <div class="card-thumb">
+          <img [src]="getServiceDefaultImage(service)" [alt]="service.name" loading="lazy" class="thumb-img" />
+          <div class="thumb-overlay"></div>
+          
+          @if (service.categoryName) {
+            <div class="card-category-badge">
+              {{ service.categoryName }}
+            </div>
+          }
+
           <div class="availability-badge" [class.avail-on]="service.isAvailable" [class.avail-off]="!service.isAvailable">
             <span class="avail-dot"></span>
-            {{ service.isAvailable ? 'Hoạt động' : 'Tạm ngừng' }}
+            {{ service.isAvailable ? 'Nhận khách' : 'Tạm dừng' }}
           </div>
         </div>
 
         <div class="card-body">
+          @if (service.providerName) {
+            <div class="provider-tag">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              <span>{{ service.providerName }}</span>
+            </div>
+          }
           <h2 class="service-name">{{ service.name }}</h2>
-          <p class="service-desc">{{ service.description || 'Chưa có mô tả.' }}</p>
+          <p class="service-desc">{{ service.description || 'Chưa có mô tả chi tiết cho dịch vụ này.' }}</p>
         </div>
 
         <div class="card-meta">
-          <div class="meta-item">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-            {{ service.price | number:'1.0-0' }} VNĐ
+          <div class="meta-item price-item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            <span class="meta-value">{{ service.price | number:'1.0-0' }} đ</span>
           </div>
-          <div class="meta-item">
+          <div class="meta-item duration-item">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            {{ service.durationMinutes }} phút
+            <span>{{ service.durationMinutes }} phút</span>
           </div>
         </div>
 
         <div class="card-footer">
           <a [routerLink]="['/services', service.id]" class="btn-detail">
-            Xem chi tiết
+            Chi tiết
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           </a>
           @if (userRole === 'Customer' && service.isAvailable) {
             <a [routerLink]="['/services', service.id]" class="btn-book">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Đặt lịch ngay
+              Đặt lịch
             </a>
           }
           @if (userRole === 'Provider') {
@@ -141,6 +216,34 @@
       </div>
       }
     </div>
+
+    <!-- Pagination Controls -->
+    @if (totalPages() > 1) {
+    <div class="pagination-wrapper">
+      <button 
+        type="button" 
+        class="pagination-btn" 
+        [disabled]="!hasPreviousPage()"
+        (click)="goToPage(pageIndex() - 1)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Trước
+      </button>
+
+      <div class="pagination-info">
+        <span>Trang <strong>{{ pageIndex() }}</strong> / <strong>{{ totalPages() }}</strong></span>
+      </div>
+
+      <button 
+        type="button" 
+        class="pagination-btn" 
+        [disabled]="!hasNextPage()"
+        (click)="goToPage(pageIndex() + 1)">
+        Tiếp
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    }
+
     }
 
   </div>
