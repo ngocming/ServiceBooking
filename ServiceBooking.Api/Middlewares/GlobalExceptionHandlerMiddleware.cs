@@ -52,25 +52,35 @@ public class GlobalExceptionHandlerMiddleware
             ArgumentException => (HttpStatusCode.BadRequest, "Bad Request"),
             InvalidOperationException => (HttpStatusCode.Conflict, "Conflict Operation"),
             UnauthorizedAccessException => (HttpStatusCode.Forbidden, "Forbidden Access"),
-            _ => (HttpStatusCode.InternalServerError, "An unexpected error occurred.")
+            _ => (HttpStatusCode.InternalServerError, "Internal Server Error")
         };
 
         context.Response.StatusCode = (int)statusCode;
+
+        var isDev = _env.IsDevelopment();
+        // Hide internal exception details in Production for 500 errors
+        var detail = (statusCode != HttpStatusCode.InternalServerError || isDev)
+            ? exception.Message
+            : "An unexpected error occurred. Please contact the system administrator.";
 
         var problemDetails = new ProblemDetails
         {
             Status = (int)statusCode,
             Title = title,
-            Detail = exception.Message,
+            Detail = detail,
             Instance = context.Request.Path
         };
 
-        if (_env.IsDevelopment())
+        if (isDev)
         {
             problemDetails.Extensions["stackTrace"] = exception.StackTrace;
         }
 
-        var result = JsonSerializer.Serialize(problemDetails);
-        return context.Response.WriteAsync(result);
+        var options = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
+
+        return context.Response.WriteAsync(JsonSerializer.Serialize(problemDetails, options));
     }
 }

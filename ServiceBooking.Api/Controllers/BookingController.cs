@@ -8,6 +8,7 @@ namespace ServiceBooking.Api.Controllers;
 
 [ApiController]
 [Route("api/booking")]
+[Route("api/bookings")]
 [Authorize]
 public class BookingController : ControllerBase
 {
@@ -86,6 +87,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPatch("{id:int}/confirm")]
+    [Authorize(Roles = "Provider")]
     public async Task<IActionResult> ConfirmBooking(int id)
     {
         var userId = GetCurrentUserId();
@@ -99,6 +101,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPatch("{id:int}/complete")]
+    [Authorize(Roles = "Provider")]
     public async Task<IActionResult> CompleteBooking(int id)
     {
         var userId = GetCurrentUserId();
@@ -112,6 +115,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPatch("{id:int}/reject")]
+    [Authorize(Roles = "Provider")]
     public async Task<IActionResult> RejectBooking(int id)
     {
         var userId = GetCurrentUserId();
@@ -125,6 +129,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpGet("provider/bookings")]
+    [Authorize(Roles = "Provider")]
     public async Task<ActionResult<IEnumerable<BookingResponseDto>>> GetProviderBookings()
     {
         var userId = GetCurrentUserId();

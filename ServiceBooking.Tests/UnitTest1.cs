@@ -1,10 +1,12 @@
-﻿namespace ServiceBooking.Tests;
+using Xunit;
 
-public class UnitTest1
+namespace ServiceBooking.Tests;
+
+public class BasicSanityTest
 {
     [Fact]
-    public void Test1()
+    public void TestEnvironment_LoadsProperly()
     {
-
+        Assert.True(true);
     }
 }

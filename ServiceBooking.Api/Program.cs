@@ -41,7 +41,6 @@ builder.Services.AddSwaggerGen(
 builder.Services.AddControllers();
 builder.Services.AddDbContext<AppDbContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-
 builder.Services.AddScoped<IProviderService, ProviderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
@@ -91,9 +90,20 @@ builder.Services.AddCors(options =>
         }
         else
         {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+            if (builder.Environment.IsDevelopment())
+            {
+                policy.SetIsOriginAllowed(_ => true)
+                      .AllowAnyMethod()
+                      .AllowAnyHeader()
+                      .AllowCredentials();
+            }
+            else
+            {
+                policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+                      .AllowAnyMethod()
+                      .AllowAnyHeader()
+                      .AllowCredentials();
+            }
         }
     });
 });

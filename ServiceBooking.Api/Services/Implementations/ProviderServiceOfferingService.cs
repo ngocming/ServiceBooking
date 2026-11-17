@@ -56,15 +56,17 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
         var provider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
         if (provider == null)
         {
-            return null;
+            throw new UnauthorizedAccessException("User is not registered as a provider.");
         }
-        var providerService = new ServiceBooking.Api.Models.ProviderService
+
+        var providerService = new Models.ProviderService
         {
             ProviderId = provider.Id,
             Name = dto.Name,
             Description = dto.Description,
             Price = dto.Price,
-            DurationMinutes = dto.DurationMinutes
+            DurationMinutes = dto.DurationMinutes,
+            IsAvailable = true
         };
 
         _context.ProviderServices.Add(providerService);
@@ -88,14 +90,18 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
         var provider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
         if (provider == null)
         {
-            return null;
+            throw new UnauthorizedAccessException("User is not registered as a provider.");
         }
 
-        var serviceOffering = await _context.ProviderServices
-            .FirstOrDefaultAsync(pso => pso.Id == id && pso.ProviderId == provider.Id);
+        var serviceOffering = await _context.ProviderServices.FirstOrDefaultAsync(pso => pso.Id == id);
         if (serviceOffering == null)
         {
-            return null;
+            throw new KeyNotFoundException("Provider service not found.");
+        }
+
+        if (serviceOffering.ProviderId != provider.Id)
+        {
+            throw new UnauthorizedAccessException("You do not have permission to update this service.");
         }
 
         serviceOffering.Name = dto.Name;
@@ -124,12 +130,18 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
         var provider = await _context.Providers.FirstOrDefaultAsync(p => p.UserId == userId);
         if (provider == null)
         {
-            return false;
+            throw new UnauthorizedAccessException("User is not registered as a provider.");
         }
-        var serviceOffering = await _context.ProviderServices.FirstOrDefaultAsync(pso => pso.Id == id && pso.ProviderId == provider.Id);
+
+        var serviceOffering = await _context.ProviderServices.FirstOrDefaultAsync(pso => pso.Id == id);
         if (serviceOffering == null)
         {
-            return false;
+            throw new KeyNotFoundException("Provider service not found.");
+        }
+
+        if (serviceOffering.ProviderId != provider.Id)
+        {
+            throw new UnauthorizedAccessException("You do not have permission to delete this service.");
         }
 
         _context.ProviderServices.Remove(serviceOffering);
@@ -143,9 +155,10 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
         var providerServices = await _context.ProviderServices.ToListAsync();
         if (providerServices == null || !providerServices.Any())
         {
-            return null;
+            return new List<ProviderServiceResponseDto>();
         }
-        var providerServiceDtos = providerServices.Select(pso => new ProviderServiceResponseDto
+
+        return providerServices.Select(pso => new ProviderServiceResponseDto
         {
             Id = pso.Id,
             ProviderId = pso.ProviderId,
@@ -156,6 +169,5 @@ public class ProviderServiceOfferingService : IProviderServiceOfferingService
             IsAvailable = pso.IsAvailable,
             CreatedAt = pso.CreatedAt
         }).ToList();
-        return providerServiceDtos;
     }
 }

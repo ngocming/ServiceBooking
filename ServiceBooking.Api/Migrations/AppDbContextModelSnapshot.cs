@@ -156,6 +156,9 @@ namespace ServiceBooking.Api.Migrations
                     b.Property<int>("DurationMinutes")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -277,7 +280,7 @@ namespace ServiceBooking.Api.Migrations
             modelBuilder.Entity("ServiceBooking.Api.Models.ProviderService", b =>
                 {
                     b.HasOne("ServiceBooking.Api.Models.Provider", "Provider")
-                        .WithMany("ProviderService")
+                        .WithMany("ProviderServices")
                         .HasForeignKey("ProviderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -287,7 +290,7 @@ namespace ServiceBooking.Api.Migrations
 
             modelBuilder.Entity("ServiceBooking.Api.Models.Provider", b =>
                 {
-                    b.Navigation("ProviderService");
+                    b.Navigation("ProviderServices");
                 });
 
             modelBuilder.Entity("ServiceBooking.Api.Models.User", b =>
