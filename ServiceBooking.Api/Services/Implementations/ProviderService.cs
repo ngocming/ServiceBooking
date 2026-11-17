@@ -1,5 +1,7 @@
 using ServiceBooking.Api.Data;
+using ServiceBooking.Api.DTOs.Availability;
 using ServiceBooking.Api.DTOs.Providers;
+using ServiceBooking.Api.DTOs.ProviderService;
 using ServiceBooking.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using ServiceBooking.Api.Models;
@@ -52,6 +54,60 @@ public class ProviderService : IProviderService
                 CreatedAt = p.CreatedAt
             })
             .FirstOrDefaultAsync();
+    }
+
+    public async Task<ProviderPublicProfileDto?> GetPublicProfileAsync(int id)
+    {
+        var provider = await _context.Providers
+            .Include(p => p.User)
+            .Include(p => p.ProviderServices.Where(s => s.IsAvailable)).ThenInclude(s => s.Category)
+            .Include(p => p.Availabilities.Where(a => a.IsAvailable))
+            .FirstOrDefaultAsync(p => p.Id == id);
+
+        if (provider == null)
+            return null;
+
+        var completedCount = await _context.Bookings
+            .CountAsync(b => b.ProviderId == id && b.Status == BookingStatus.Completed);
+
+        return new ProviderPublicProfileDto
+        {
+            Id = provider.Id,
+            DisplayName = provider.DisplayName ?? provider.User?.Username ?? string.Empty,
+            Description = provider.Description,
+            Phone = provider.Phone,
+            Address = provider.Address,
+            Latitude = provider.Latitude,
+            Longitude = provider.Longitude,
+            IsAvailable = provider.IsAvailable,
+            CompletedBookingsCount = completedCount,
+            Services = provider.ProviderServices.Select(s => new ProviderServiceResponseDto
+            {
+                Id = s.Id,
+                ProviderId = s.ProviderId,
+                ProviderName = provider.DisplayName ?? provider.User?.Username,
+                CategoryId = s.CategoryId,
+                CategoryName = s.Category?.Name,
+                Name = s.Name,
+                Description = s.Description,
+                ImageUrl = s.ImageUrl,
+                Price = s.Price,
+                DurationMinutes = s.DurationMinutes,
+                IsAvailable = s.IsAvailable,
+                CreatedAt = s.CreatedAt
+            }).ToList(),
+            WeeklySchedule = provider.Availabilities
+                .OrderBy(a => a.DayOfWeek)
+                .ThenBy(a => a.StartTime)
+                .Select(a => new ProviderAvailabilityDto
+                {
+                    Id = a.Id,
+                    DayOfWeek = a.DayOfWeek,
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime,
+                    IsAvailable = a.IsAvailable
+                }).ToList()
+        };
     }
 
     public async Task<ProviderResponseDto?> CreateAsync(CreateProviderDto dto, int userId)

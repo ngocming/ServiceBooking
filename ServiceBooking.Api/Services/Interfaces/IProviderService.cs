@@ -8,6 +8,7 @@ public interface IProviderService
 
     Task<ProviderResponseDto?> GetByIdAsync(int id);
     Task<ProviderResponseDto?> GetByUserIdAsync(int userId);
+    Task<ProviderPublicProfileDto?> GetPublicProfileAsync(int id);
 
     Task<ProviderResponseDto?> CreateAsync(CreateProviderDto dto, int userId);
 

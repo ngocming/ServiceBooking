@@ -66,13 +66,23 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize(Roles = "Admin,Customer")]
+    [Authorize(Roles = "Admin,Customer,Provider")]
     public async Task<ActionResult<ProviderResponseDto>> GetById(int id)
     {
         var provider = await _providerService.GetByIdAsync(id);
         if (provider == null)
             return NotFound("Provider not found for get");
         return Ok(provider);
+    }
+
+    [HttpGet("{id:int}/public")]
+    [AllowAnonymous]
+    public async Task<ActionResult<ProviderPublicProfileDto>> GetPublicProfile(int id)
+    {
+        var profile = await _providerService.GetPublicProfileAsync(id);
+        if (profile == null)
+            return NotFound("Provider not found.");
+        return Ok(profile);
     }
 
     [HttpPost]
