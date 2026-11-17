@@ -394,4 +394,110 @@ public class BookingServiceTests
         var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => bookingService.CreateAsync(userId: 1, dto));
         Assert.Contains("schedule", ex.Message, StringComparison.OrdinalIgnoreCase);
     }
+
+    [Fact]
+    public async Task CreateAsync_CancelledOrRejectedBooking_AllowsRebookingSameSlot()
+    {
+        var (db, customer, provider, service) = SetupBaseData(nameof(CreateAsync_CancelledOrRejectedBooking_AllowsRebookingSameSlot));
+        var bookingService = new BookingService(db);
+
+        var bookingTime = DateTime.UtcNow.AddDays(4).Date.AddHours(10); // 10:00 to 11:00
+
+        // Existing booking that was Cancelled
+        db.Bookings.Add(new Booking
+        {
+            Id = 601,
+            CustomerId = customer.Id,
+            ProviderId = provider.Id,
+            ProviderServiceId = service.Id,
+            BookingDate = bookingTime,
+            StartAt = bookingTime,
+            EndAt = bookingTime.AddMinutes(60),
+            Status = BookingStatus.Cancelled,
+            TotalPrice = service.Price
+        });
+
+        // Another existing booking that was Rejected
+        var rejectedTime = bookingTime.AddHours(2); // 12:00 to 13:00
+        db.Bookings.Add(new Booking
+        {
+            Id = 602,
+            CustomerId = customer.Id,
+            ProviderId = provider.Id,
+            ProviderServiceId = service.Id,
+            BookingDate = rejectedTime,
+            StartAt = rejectedTime,
+            EndAt = rejectedTime.AddMinutes(60),
+            Status = BookingStatus.Rejected,
+            TotalPrice = service.Price
+        });
+        await db.SaveChangesAsync();
+
+        // Customer attempts to re-book at 10:00 (cancelled slot)
+        var dto1 = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = bookingTime,
+            Note = "Rebook cancelled slot"
+        };
+        var result1 = await bookingService.CreateAsync(userId: 1, dto1);
+        Assert.NotNull(result1);
+        Assert.Equal("Pending", result1.Status);
+
+        // Customer attempts to re-book at 12:00 (rejected slot)
+        var dto2 = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = rejectedTime,
+            Note = "Rebook rejected slot"
+        };
+        var result2 = await bookingService.CreateAsync(userId: 1, dto2);
+        Assert.NotNull(result2);
+        Assert.Equal("Pending", result2.Status);
+    }
+
+    [Fact]
+    public async Task CreateAsync_AdjacentBookingsBeforeAndAfter_Succeed()
+    {
+        var (db, customer, provider, service) = SetupBaseData(nameof(CreateAsync_AdjacentBookingsBeforeAndAfter_Succeed));
+        var bookingService = new BookingService(db);
+
+        var middleTime = DateTime.UtcNow.AddDays(5).Date.AddHours(14); // 14:00 - 15:00
+
+        db.Bookings.Add(new Booking
+        {
+            Id = 701,
+            CustomerId = customer.Id,
+            ProviderId = provider.Id,
+            ProviderServiceId = service.Id,
+            BookingDate = middleTime,
+            StartAt = middleTime,
+            EndAt = middleTime.AddMinutes(60),
+            Status = BookingStatus.Confirmed,
+            TotalPrice = service.Price
+        });
+        await db.SaveChangesAsync();
+
+        // Slot immediately before: 13:00 - 14:00
+        var beforeDto = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = middleTime.AddHours(-1),
+            Note = "Slot before"
+        };
+        var beforeResult = await bookingService.CreateAsync(userId: 1, beforeDto);
+        Assert.NotNull(beforeResult);
+        Assert.Equal("Pending", beforeResult.Status);
+
+        // Slot immediately after: 15:00 - 16:00
+        var afterDto = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = middleTime.AddHours(1),
+            Note = "Slot after"
+        };
+        var afterResult = await bookingService.CreateAsync(userId: 1, afterDto);
+        Assert.NotNull(afterResult);
+        Assert.Equal("Pending", afterResult.Status);
+    }
 }
