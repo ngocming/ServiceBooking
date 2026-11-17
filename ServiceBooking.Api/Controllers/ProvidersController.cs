@@ -76,7 +76,7 @@ public class ProvidersController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Provider")]
     public async Task<ActionResult<ProviderResponseDto>> Create([FromBody] CreateProviderDto dto)
     {
         var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);

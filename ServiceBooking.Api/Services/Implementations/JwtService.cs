@@ -30,11 +30,18 @@ public class JwtService : IJwtService
         };
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+        var expMinutes = _configuration.GetValue<int>("JWT:ExpirationInMinutes");
+        if (expMinutes <= 0)
+        {
+            expMinutes = 60;
+        }
+
         var token = new JwtSecurityToken(
             issuer: issuer,
             audience: audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_configuration.GetValue<int>("JWT:ExpirationInMinutes")),
+            expires: DateTime.UtcNow.AddMinutes(expMinutes),
             signingCredentials: credentials
         );
         return new JwtSecurityTokenHandler().WriteToken(token);

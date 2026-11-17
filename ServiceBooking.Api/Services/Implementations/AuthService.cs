@@ -99,30 +99,36 @@ public class AuthService : IAuthService
             await _context.SaveChangesAsync();
         }
 
+        var token = _jwtService.GenerateToken(user);
+
         return new AuthResponseDto
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
-            Role = user.Role
+            Role = user.Role,
+            Token = token
         };
     }
 
     public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == dto.Email && !u.IsDeleted);
+        var user = await _context.Users.FirstOrDefaultAsync(u => (u.Email == dto.Email || u.Username == dto.Email) && !u.IsDeleted);
         if (user == null)
             return null;
 
         if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             return null;
 
+        var token = _jwtService.GenerateToken(user);
+
         return new AuthResponseDto
         {
             Id = user.Id,
             Username = user.Username,
             Email = user.Email,
-            Role = user.Role
+            Role = user.Role,
+            Token = token
         };
     }
 
