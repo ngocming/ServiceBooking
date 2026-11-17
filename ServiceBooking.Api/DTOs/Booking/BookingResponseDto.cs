@@ -16,6 +16,10 @@ public class BookingResponseDto
 
     public DateTime BookingDate { get; set; }
 
+    public DateTime StartAt { get; set; }
+
+    public DateTime EndAt { get; set; }
+
     public string Status { get; set; } = string.Empty;
 
     public string? Note { get; set; }

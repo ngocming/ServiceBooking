@@ -293,4 +293,73 @@ public class BookingServiceTests
         // Customer (userId: 1) attempts to Confirm booking
         await Assert.ThrowsAsync<UnauthorizedAccessException>(() => bookingService.ConfirmAsync(userId: 1, bookingId: 12));
     }
+
+    [Fact]
+    public async Task CreateAsync_SetsStartAtAndEndAtAndLogsInitialHistory()
+    {
+        var (db, customer, provider, service) = SetupBaseData(nameof(CreateAsync_SetsStartAtAndEndAtAndLogsInitialHistory));
+        var bookingService = new BookingService(db);
+
+        var bookingDate = DateTime.UtcNow.AddDays(2);
+        var dto = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = bookingDate,
+            Note = "Test history"
+        };
+
+        var result = await bookingService.CreateAsync(userId: 1, dto);
+
+        Assert.NotNull(result);
+        Assert.Equal(bookingDate, result.StartAt);
+        Assert.Equal(bookingDate.AddMinutes(service.DurationMinutes), result.EndAt);
+
+        var history = (await bookingService.GetHistoryAsync(userId: 1, result.Id)).ToList();
+        Assert.Single(history);
+        Assert.Null(history[0].PreviousStatus);
+        Assert.Equal("Pending", history[0].NewStatus);
+        Assert.Equal(1, history[0].ChangedByUserId);
+    }
+
+    [Fact]
+    public async Task StatusTransitions_LogFullHistoryAuditTrail()
+    {
+        var (db, customer, provider, service) = SetupBaseData(nameof(StatusTransitions_LogFullHistoryAuditTrail));
+        var bookingService = new BookingService(db);
+
+        var bookingDate = DateTime.UtcNow.AddDays(3);
+        var dto = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = bookingDate,
+            Note = "Transition test"
+        };
+
+        var created = await bookingService.CreateAsync(userId: 1, dto);
+
+        // Provider confirms
+        await bookingService.ConfirmAsync(userId: 2, bookingId: created.Id, reason: "Confirmed on phone");
+
+        // Provider completes
+        await bookingService.CompleteAsync(userId: 2, bookingId: created.Id, reason: "Service delivered successfully");
+
+        var history = (await bookingService.GetHistoryAsync(userId: 1, created.Id)).ToList();
+        Assert.Equal(3, history.Count);
+
+        // 1: Pending
+        Assert.Null(history[0].PreviousStatus);
+        Assert.Equal("Pending", history[0].NewStatus);
+
+        // 2: Confirmed
+        Assert.Equal("Pending", history[1].PreviousStatus);
+        Assert.Equal("Confirmed", history[1].NewStatus);
+        Assert.Equal("Confirmed on phone", history[1].Reason);
+        Assert.Equal(2, history[1].ChangedByUserId);
+
+        // 3: Completed
+        Assert.Equal("Confirmed", history[2].PreviousStatus);
+        Assert.Equal("Completed", history[2].NewStatus);
+        Assert.Equal("Service delivered successfully", history[2].Reason);
+        Assert.Equal(2, history[2].ChangedByUserId);
+    }
 }

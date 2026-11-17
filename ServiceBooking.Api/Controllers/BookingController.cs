@@ -73,8 +73,8 @@ public class BookingController : ControllerBase
         return Ok(booking);
     }
 
-    [HttpPatch("{id:int}/cancel")]
-    public async Task<IActionResult> CancelBooking(int id)
+    [HttpGet("{id:int}/history")]
+    public async Task<ActionResult<IEnumerable<BookingStatusHistoryDto>>> GetBookingHistory(int id)
     {
         var userId = GetCurrentUserId();
         if (userId <= 0)
@@ -82,13 +82,26 @@ public class BookingController : ControllerBase
             return Unauthorized("Invalid user token.");
         }
 
-        await _bookingService.CancelAsync(userId, id);
+        var history = await _bookingService.GetHistoryAsync(userId, id);
+        return Ok(history);
+    }
+
+    [HttpPatch("{id:int}/cancel")]
+    public async Task<IActionResult> CancelBooking(int id, [FromBody] BookingStatusUpdateDto? dto = null)
+    {
+        var userId = GetCurrentUserId();
+        if (userId <= 0)
+        {
+            return Unauthorized("Invalid user token.");
+        }
+
+        await _bookingService.CancelAsync(userId, id, dto?.Reason);
         return Ok(new { message = "Booking cancelled successfully." });
     }
 
     [HttpPatch("{id:int}/confirm")]
     [Authorize(Roles = "Provider")]
-    public async Task<IActionResult> ConfirmBooking(int id)
+    public async Task<IActionResult> ConfirmBooking(int id, [FromBody] BookingStatusUpdateDto? dto = null)
     {
         var userId = GetCurrentUserId();
         if (userId <= 0)
@@ -96,13 +109,13 @@ public class BookingController : ControllerBase
             return Unauthorized("Invalid user token.");
         }
 
-        await _bookingService.ConfirmAsync(userId, id);
+        await _bookingService.ConfirmAsync(userId, id, dto?.Reason);
         return Ok(new { message = "Booking confirmed successfully." });
     }
 
     [HttpPatch("{id:int}/complete")]
     [Authorize(Roles = "Provider")]
-    public async Task<IActionResult> CompleteBooking(int id)
+    public async Task<IActionResult> CompleteBooking(int id, [FromBody] BookingStatusUpdateDto? dto = null)
     {
         var userId = GetCurrentUserId();
         if (userId <= 0)
@@ -110,13 +123,13 @@ public class BookingController : ControllerBase
             return Unauthorized("Invalid user token.");
         }
 
-        await _bookingService.CompleteAsync(userId, id);
+        await _bookingService.CompleteAsync(userId, id, dto?.Reason);
         return Ok(new { message = "Booking completed successfully." });
     }
 
     [HttpPatch("{id:int}/reject")]
     [Authorize(Roles = "Provider")]
-    public async Task<IActionResult> RejectBooking(int id)
+    public async Task<IActionResult> RejectBooking(int id, [FromBody] BookingStatusUpdateDto? dto = null)
     {
         var userId = GetCurrentUserId();
         if (userId <= 0)
@@ -124,7 +137,7 @@ public class BookingController : ControllerBase
             return Unauthorized("Invalid user token.");
         }
 
-        await _bookingService.RejectAsync(userId, id);
+        await _bookingService.RejectAsync(userId, id, dto?.Reason);
         return Ok(new { message = "Booking rejected successfully." });
     }
 

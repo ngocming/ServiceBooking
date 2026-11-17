@@ -39,6 +39,9 @@ namespace ServiceBooking.Api.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
+                    b.Property<DateTime>("EndAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
@@ -47,6 +50,9 @@ namespace ServiceBooking.Api.Migrations
 
                     b.Property<int>("ProviderServiceId")
                         .HasColumnType("int");
+
+                    b.Property<DateTime>("StartAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -63,6 +69,41 @@ namespace ServiceBooking.Api.Migrations
                     b.HasIndex("ProviderServiceId");
 
                     b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("ServiceBooking.Api.Models.BookingStatusHistory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ChangedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ChangedByUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NewStatus")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PreviousStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId");
+
+                    b.HasIndex("ChangedByUserId");
+
+                    b.ToTable("BookingStatusHistories");
                 });
 
             modelBuilder.Entity("ServiceBooking.Api.Models.Customer", b =>
@@ -255,6 +296,25 @@ namespace ServiceBooking.Api.Migrations
                     b.Navigation("ProviderService");
                 });
 
+            modelBuilder.Entity("ServiceBooking.Api.Models.BookingStatusHistory", b =>
+                {
+                    b.HasOne("ServiceBooking.Api.Models.Booking", "Booking")
+                        .WithMany("StatusHistories")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ServiceBooking.Api.Models.User", "ChangedByUser")
+                        .WithMany()
+                        .HasForeignKey("ChangedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("ChangedByUser");
+                });
+
             modelBuilder.Entity("ServiceBooking.Api.Models.Customer", b =>
                 {
                     b.HasOne("ServiceBooking.Api.Models.User", "User")
@@ -286,6 +346,11 @@ namespace ServiceBooking.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Provider");
+                });
+
+            modelBuilder.Entity("ServiceBooking.Api.Models.Booking", b =>
+                {
+                    b.Navigation("StatusHistories");
                 });
 
             modelBuilder.Entity("ServiceBooking.Api.Models.Provider", b =>

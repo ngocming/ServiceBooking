@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<ProviderService> ProviderServices { get; set; }
 
     public DbSet<Booking> Bookings { get; set; }
+    public DbSet<BookingStatusHistory> BookingStatusHistories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -68,6 +69,18 @@ public class AppDbContext : DbContext
             .HasOne(b => b.ProviderService)
             .WithMany()
             .HasForeignKey(b => b.ProviderServiceId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<BookingStatusHistory>()
+            .HasOne(h => h.Booking)
+            .WithMany(b => b.StatusHistories)
+            .HasForeignKey(h => h.BookingId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BookingStatusHistory>()
+            .HasOne(h => h.ChangedByUser)
+            .WithMany()
+            .HasForeignKey(h => h.ChangedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -17,20 +17,28 @@ public interface IBookingService
 
     Task CancelAsync(
         int userId,
-        int bookingId);
+        int bookingId,
+        string? reason = null);
 
     Task ConfirmAsync(
         int userId,
-        int bookingId);
+        int bookingId,
+        string? reason = null);
 
     Task CompleteAsync(
         int userId,
-        int bookingId);
+        int bookingId,
+        string? reason = null);
 
     Task RejectAsync(
         int userId,
-        int bookingId);
+        int bookingId,
+        string? reason = null);
 
     Task<IEnumerable<BookingResponseDto>> GetProviderBookingsAsync(
-    int userId);
+        int userId);
+
+    Task<IEnumerable<BookingStatusHistoryDto>> GetHistoryAsync(
+        int userId,
+        int bookingId);
 }

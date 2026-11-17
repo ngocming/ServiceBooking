@@ -12,6 +12,10 @@ public class Booking
 
     public DateTime BookingDate { get; set; }
 
+    public DateTime StartAt { get; set; }
+
+    public DateTime EndAt { get; set; }
+
     public BookingStatus Status { get; set; } = BookingStatus.Pending;
 
     public string? Note { get; set; }
@@ -26,4 +30,6 @@ public class Booking
     public Provider Provider { get; set; } = null!;
 
     public ProviderService ProviderService { get; set; } = null!;
+
+    public ICollection<BookingStatusHistory> StatusHistories { get; set; } = new List<BookingStatusHistory>();
 }

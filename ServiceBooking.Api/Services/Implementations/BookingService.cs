@@ -68,8 +68,8 @@ public class BookingService : IBookingService
         var hasOverlap = relevantBookings.Any(b =>
         {
             var existingDuration = b.ProviderService?.DurationMinutes > 0 ? b.ProviderService.DurationMinutes : 60;
-            var existingStart = b.BookingDate;
-            var existingEnd = existingStart.AddMinutes(existingDuration);
+            var existingStart = b.StartAt != default ? b.StartAt : b.BookingDate;
+            var existingEnd = b.EndAt != default ? b.EndAt : existingStart.AddMinutes(existingDuration);
 
             // Two intervals [A_start, A_end] and [B_start, B_end] overlap if A_start < B_end and A_end > B_start
             return newStart < existingEnd && newEnd > existingStart;
@@ -86,6 +86,8 @@ public class BookingService : IBookingService
             ProviderId = providerService.ProviderId,
             ProviderServiceId = providerService.Id,
             BookingDate = dto.BookingDate,
+            StartAt = newStart,
+            EndAt = newEnd,
             Note = dto.Note,
             Status = BookingStatus.Pending,
             TotalPrice = providerService.Price,
@@ -93,6 +95,18 @@ public class BookingService : IBookingService
         };
 
         _dbContext.Bookings.Add(booking);
+        await _dbContext.SaveChangesAsync();
+
+        var initialHistory = new BookingStatusHistory
+        {
+            BookingId = booking.Id,
+            PreviousStatus = null,
+            NewStatus = BookingStatus.Pending,
+            ChangedByUserId = userId,
+            ChangedAt = DateTime.UtcNow,
+            Reason = "Booking created."
+        };
+        _dbContext.BookingStatusHistories.Add(initialHistory);
         await _dbContext.SaveChangesAsync();
 
         var savedBooking = await _dbContext.Bookings
@@ -172,7 +186,7 @@ public class BookingService : IBookingService
         return MapToDto(booking);
     }
 
-    public async Task CancelAsync(int userId, int bookingId)
+    public async Task CancelAsync(int userId, int bookingId, string? reason = null)
     {
         var booking = await _dbContext.Bookings
             .Include(b => b.Customer)
@@ -197,11 +211,23 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Only pending or confirmed bookings can be cancelled.");
         }
 
+        var previousStatus = booking.Status;
         booking.Status = BookingStatus.Cancelled;
+
+        _dbContext.BookingStatusHistories.Add(new BookingStatusHistory
+        {
+            BookingId = booking.Id,
+            PreviousStatus = previousStatus,
+            NewStatus = BookingStatus.Cancelled,
+            ChangedByUserId = userId,
+            ChangedAt = DateTime.UtcNow,
+            Reason = reason ?? "Booking cancelled."
+        });
+
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task ConfirmAsync(int userId, int bookingId)
+    public async Task ConfirmAsync(int userId, int bookingId, string? reason = null)
     {
         var booking = await _dbContext.Bookings
             .FirstOrDefaultAsync(b => b.Id == bookingId);
@@ -224,11 +250,23 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Only pending bookings can be confirmed.");
         }
 
+        var previousStatus = booking.Status;
         booking.Status = BookingStatus.Confirmed;
+
+        _dbContext.BookingStatusHistories.Add(new BookingStatusHistory
+        {
+            BookingId = booking.Id,
+            PreviousStatus = previousStatus,
+            NewStatus = BookingStatus.Confirmed,
+            ChangedByUserId = userId,
+            ChangedAt = DateTime.UtcNow,
+            Reason = reason ?? "Booking confirmed by provider."
+        });
+
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task CompleteAsync(int userId, int bookingId)
+    public async Task CompleteAsync(int userId, int bookingId, string? reason = null)
     {
         var booking = await _dbContext.Bookings
             .FirstOrDefaultAsync(b => b.Id == bookingId);
@@ -251,11 +289,23 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Only confirmed bookings can be completed.");
         }
 
+        var previousStatus = booking.Status;
         booking.Status = BookingStatus.Completed;
+
+        _dbContext.BookingStatusHistories.Add(new BookingStatusHistory
+        {
+            BookingId = booking.Id,
+            PreviousStatus = previousStatus,
+            NewStatus = BookingStatus.Completed,
+            ChangedByUserId = userId,
+            ChangedAt = DateTime.UtcNow,
+            Reason = reason ?? "Booking marked as completed."
+        });
+
         await _dbContext.SaveChangesAsync();
     }
 
-    public async Task RejectAsync(int userId, int bookingId)
+    public async Task RejectAsync(int userId, int bookingId, string? reason = null)
     {
         var booking = await _dbContext.Bookings
             .FirstOrDefaultAsync(b => b.Id == bookingId);
@@ -278,12 +328,67 @@ public class BookingService : IBookingService
             throw new InvalidOperationException("Only pending bookings can be rejected.");
         }
 
+        var previousStatus = booking.Status;
         booking.Status = BookingStatus.Rejected;
+
+        _dbContext.BookingStatusHistories.Add(new BookingStatusHistory
+        {
+            BookingId = booking.Id,
+            PreviousStatus = previousStatus,
+            NewStatus = BookingStatus.Rejected,
+            ChangedByUserId = userId,
+            ChangedAt = DateTime.UtcNow,
+            Reason = reason ?? "Booking rejected by provider."
+        });
+
         await _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<BookingStatusHistoryDto>> GetHistoryAsync(int userId, int bookingId)
+    {
+        var booking = await _dbContext.Bookings
+            .Include(b => b.Customer)
+            .FirstOrDefaultAsync(b => b.Id == bookingId);
+
+        if (booking == null)
+        {
+            throw new KeyNotFoundException("Booking not found.");
+        }
+
+        var isCustomer = booking.Customer.UserId == userId;
+        var isProvider = await _dbContext.Providers
+            .AnyAsync(p => p.Id == booking.ProviderId && p.UserId == userId);
+
+        if (!isCustomer && !isProvider)
+        {
+            throw new UnauthorizedAccessException("You are not allowed to view the history for this booking.");
+        }
+
+        var histories = await _dbContext.BookingStatusHistories
+            .Include(h => h.ChangedByUser)
+            .Where(h => h.BookingId == bookingId)
+            .OrderBy(h => h.ChangedAt)
+            .ToListAsync();
+
+        return histories.Select(h => new BookingStatusHistoryDto
+        {
+            Id = h.Id,
+            BookingId = h.BookingId,
+            PreviousStatus = h.PreviousStatus?.ToString(),
+            NewStatus = h.NewStatus.ToString(),
+            ChangedByUserId = h.ChangedByUserId,
+            ChangedByUsername = h.ChangedByUser?.Username ?? string.Empty,
+            ChangedAt = h.ChangedAt,
+            Reason = h.Reason
+        });
     }
 
     private static BookingResponseDto MapToDto(Booking booking)
     {
+        var duration = booking.ProviderService?.DurationMinutes > 0 ? booking.ProviderService.DurationMinutes : 60;
+        var start = booking.StartAt != default ? booking.StartAt : booking.BookingDate;
+        var end = booking.EndAt != default ? booking.EndAt : start.AddMinutes(duration);
+
         return new BookingResponseDto
         {
             Id = booking.Id,
@@ -295,6 +400,8 @@ public class BookingService : IBookingService
                 ?? booking.Provider?.DisplayName
                 ?? string.Empty,
             BookingDate = booking.BookingDate,
+            StartAt = start,
+            EndAt = end,
             Status = booking.Status.ToString(),
             Note = booking.Note,
             TotalPrice = booking.TotalPrice,
