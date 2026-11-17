@@ -117,8 +117,15 @@
   box-shadow: 0 4px 12px rgba(13, 27, 42, 0.25);
 }
 
-.pill-icon {
-  font-size: 1.05rem;
+.pill-icon-svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #d4a017;
+  transition: color 200ms ease;
+}
+.category-pill.active .pill-icon-svg {
+  color: #ffffff;
 }
 .pill-label {
   font-weight: 600;

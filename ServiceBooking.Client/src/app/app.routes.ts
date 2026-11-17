@@ -17,8 +17,15 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    loadComponent: () => import('./pages/home/home').then(m => m.Home),
-    canActivate: [authGuard]
+    loadComponent: () => import('./pages/home/home').then(m => m.Home)
+  },
+  {
+    path: 'services',
+    loadComponent: () => import('./pages/services/services').then(m => m.Services)
+  },
+  {
+    path: 'services/:id',
+    loadComponent: () => import('./pages/services/service-detail/service-detail').then(m => m.ServiceDetail)
   },
   {
     path: 'provider/dashboard',
@@ -58,15 +65,7 @@ export const routes: Routes = [
   },
   {
     path: 'customer/services',
-    loadComponent: () => import('./pages/services/services').then(m => m.Services),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['Customer'] }
+    loadComponent: () => import('./pages/services/services').then(m => m.Services)
   },
-  {
-    path: 'services/:id',
-    loadComponent: () => import('./pages/services/service-detail/service-detail').then(m => m.ServiceDetail),
-    canActivate: [authGuard, roleGuard],
-    data: { roles: ['Customer', 'Provider'] }
-  },
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
 ];
