@@ -1,41 +1,52 @@
+/* =====================================================
+   PROVIDER PROFILE — Premium Car Booking Theme
+   ===================================================== */
+
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
   padding: 2.5rem 1.5rem 4rem;
+  background-color: #f8f7f5;
+  min-height: 100vh;
 }
 
+/* ── Header ── */
 .profile-header {
   margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #d4a017;
 }
 
 .page-title {
   font-size: 2rem;
   font-weight: 800;
-  color: #0f172a;
+  color: #0d1b2a;
   letter-spacing: -0.025em;
   margin: 0 0 0.5rem;
 }
 
 .page-subtitle {
-  color: #64748b;
+  color: #6b6560;
   font-size: 1rem;
   margin: 0;
 }
 
+/* ── Profile card ── */
 .profile-card {
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #f1f5f9;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e8e5df;
   padding: 2.5rem;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 8px rgba(13, 27, 42, 0.06);
 }
 
+/* ── Alerts ── */
 .alert {
   display: flex;
   align-items: center;
   gap: 0.75rem;
   padding: 1rem 1.25rem;
-  border-radius: 12px;
+  border-radius: 10px;
   margin-bottom: 1.75rem;
   font-weight: 600;
   font-size: 0.95rem;
@@ -53,6 +64,7 @@
   border: 1px solid #fecaca;
 }
 
+/* ── Form layout ── */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -69,44 +81,58 @@
   gap: 0.5rem;
 }
 
+/* Labels */
 .form-label {
   font-size: 0.875rem;
   font-weight: 700;
-  color: #334155;
+  color: #3d3b38;
 }
 
 .required {
   color: #ef4444;
 }
 
-.form-input, .form-textarea {
+/* Inputs & textareas */
+.form-input,
+.form-textarea {
   width: 100%;
   padding: 0.875rem 1.125rem;
-  border-radius: 12px;
-  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  border: 1.5px solid #e8e5df;
   font-size: 0.95rem;
-  font-family: inherit;
-  color: #0f172a;
-  transition: all 0.2s ease;
+  font-family: var(--font-sans, 'Inter', system-ui);
+  color: #1a1a1a;
+  background-color: #f8f7f5;
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
   box-sizing: border-box;
+  outline: none;
 }
 
-.form-input:focus, .form-textarea:focus {
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #b5b1aa;
+}
+
+.form-input:focus,
+.form-textarea:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: #d4a017;
+  box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.15);
+  background-color: #ffffff;
 }
 
 .form-textarea {
   resize: vertical;
 }
 
+/* Field error */
 .field-error {
   font-size: 0.8rem;
   color: #ef4444;
   font-weight: 600;
 }
 
+/* ── Toggle (availability switch) ── */
 .toggle-wrap {
   display: flex;
   align-items: center;
@@ -134,8 +160,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #cbd5e1;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: #d4cfc8;
+  transition: background-color 280ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .slider:before {
@@ -145,13 +171,13 @@
   width: 22px;
   left: 3px;
   bottom: 3px;
-  background-color: white;
-  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  background-color: #ffffff;
+  transition: transform 280ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
 }
 
 input:checked + .slider {
-  background-color: #10b981;
+  background-color: #d4a017;
 }
 
 input:checked + .slider:before {
@@ -169,9 +195,10 @@ input:checked + .slider:before {
 .toggle-text {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #1e293b;
+  color: #1a1a1a;
 }
 
+/* ── Form actions ── */
 .form-actions {
   margin-top: 2rem;
   display: flex;
@@ -179,58 +206,83 @@ input:checked + .slider:before {
 }
 
 .btn-submit {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  color: white;
+  background: #0d1b2a;
+  color: #ffffff;
   padding: 0.875rem 2rem;
-  border-radius: 12px;
+  border-radius: 10px;
   border: none;
   font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  transition: all 200ms ease;
+  box-shadow: 0 4px 14px rgba(13, 27, 42, 0.22);
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  font-family: var(--font-sans, 'Inter', system-ui);
+  letter-spacing: 0.01em;
 }
 
 .btn-submit:hover:not(:disabled) {
+  background: #162032;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(79, 70, 229, 0.35);
+  box-shadow: 0 6px 20px rgba(13, 27, 42, 0.30);
+}
+
+.btn-submit:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .btn-submit:disabled {
-  opacity: 0.7;
+  opacity: 0.65;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* Spinner */
 .spinner-sm {
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
+/* ── State containers ── */
 .state-container {
   text-align: center;
   padding: 4rem 2rem;
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #f1f5f9;
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid #e8e5df;
+  box-shadow: 0 1px 3px rgba(13, 27, 42, 0.04);
+}
+
+.state-container h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0 0 0.5rem;
+}
+
+.state-container p {
+  font-size: 0.95rem;
+  color: #6b6560;
+  margin: 0;
 }
 
 .spinner-ring {
   width: 40px;
   height: 40px;
   margin: 0 auto 1.5rem;
-  border: 3px solid #e2e8f0;
-  border-top-color: #4f46e5;
+  border: 3px solid #e8e5df;
+  border-top-color: #d4a017;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -238,19 +290,40 @@ input:checked + .slider:before {
 .btn-retry {
   margin-top: 1rem;
   padding: 0.5rem 1.25rem;
-  background: #4f46e5;
-  color: white;
+  background: #0d1b2a;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+  font-family: var(--font-sans, 'Inter', system-ui);
+  transition: background 180ms ease;
 }
 
+.btn-retry:hover {
+  background: #162032;
+}
+
+/* ── Responsive ── */
 @media (max-width: 640px) {
   .form-grid {
     grid-template-columns: 1fr;
   }
+
   .full-width {
     grid-column: span 1;
+  }
+
+  .profile-card {
+    padding: 1.5rem;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .btn-submit {
+    width: 100%;
+    justify-content: center;
   }
 }

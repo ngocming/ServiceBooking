@@ -1,5 +1,17 @@
 <section class="forbidden-page">
-    <h1>Không có quyền truy cập</h1>
-    <p>Tài khoản của bạn không thể sử dụng chức năng này.</p>
-    <a routerLink="/login">Quay lại trang đăng nhập</a>
+  <div class="forbidden-card">
+    <div class="forbidden-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+      </svg>
+    </div>
+    <span class="forbidden-code">403 FORBIDDEN</span>
+    <h1 class="forbidden-title">Không có quyền truy cập</h1>
+    <p class="forbidden-desc">Tài khoản của bạn không có thẩm quyền sử dụng chức năng này. Vui lòng kiểm tra lại quyền hạn hoặc đăng nhập bằng tài khoản phù hợp.</p>
+    <div class="forbidden-actions">
+      <a routerLink="/" class="btn-home">Về trang chủ</a>
+      <a routerLink="/login" class="btn-login">Đăng nhập tài khoản khác</a>
+    </div>
+  </div>
 </section>

@@ -1,20 +1,98 @@
 .forbidden-page {
+  display: flex;
   align-items: center;
-  color: #334155;
+  justify-content: center;
+  min-height: calc(100vh - 120px);
+  padding: 2rem 1.5rem;
+  background-color: var(--clr-bg, #f8f7f5);
+}
+
+.forbidden-card {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffff;
+  border-radius: var(--radius-xl, 20px);
+  border: 1px solid var(--clr-border, #e8e5df);
+  padding: 3rem 2.5rem;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(13, 27, 42, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+}
+
+.forbidden-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fef2f2;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  min-height: 320px;
-  text-align: center;
+  margin-bottom: 1.5rem;
 }
 
-.forbidden-page h1 {
-  color: #b91c1c;
-  font-size: 28px;
-  margin: 0;
+.forbidden-code {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
 }
 
-.forbidden-page p {
-  margin: 0;
+.forbidden-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0d1b2a;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.02em;
+}
+
+.forbidden-desc {
+  font-size: 0.95rem;
+  color: var(--clr-text-muted, #6b6560);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.forbidden-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+}
+
+.btn-home {
+  padding: 0.75rem 1.5rem;
+  background: #0d1b2a;
+  color: #ffffff;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 200ms ease;
+}
+
+.btn-home:hover {
+  background: #1e2d40;
+  transform: translateY(-1px);
+}
+
+.btn-login {
+  padding: 0.75rem 1.5rem;
+  background: #ffffff;
+  color: #1a1a1a;
+  border: 1.5px solid #d4cfc8;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: all 200ms ease;
+}
+
+.btn-login:hover {
+  background: #f8f7f5;
+  border-color: #b5b1aa;
 }

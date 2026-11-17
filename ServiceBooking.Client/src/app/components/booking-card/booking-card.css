@@ -1,285 +1,260 @@
+/* =========================================================
+   Booking Card — Premium Car Booking Design
+   ========================================================= */
+
 :host {
   display: block;
-  height: 100%;
 }
 
+/* ----- Card shell ----- */
 .booking-card {
+  font-family: 'Inter', sans-serif;
   background: #ffffff;
-  border-radius: 20px;
+  border-radius: 16px;
+  border: 1px solid #e8e5df;
+  box-shadow: 0 1px 3px rgba(13, 27, 42, 0.06), 0 1px 2px rgba(13, 27, 42, 0.04);
   overflow: hidden;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
-  border: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
-  height: 100%;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
+  transition: box-shadow 220ms ease, transform 220ms ease;
 }
 
 .booking-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-  border-color: #e2e8f0;
+  box-shadow: 0 8px 24px rgba(13, 27, 42, 0.1), 0 2px 8px rgba(13, 27, 42, 0.06);
+  transform: translateY(-2px);
 }
 
+/* ----- Card header ----- */
 .card-header {
-  padding: 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(248, 250, 252, 0.5);
+  padding: 1.25rem 1.5rem;
+  background: #fafafa;
+  border-bottom: 1px solid #f4f3f0;
 }
 
 .booking-id {
+  font-size: 0.9rem;
   font-weight: 700;
-  color: #0f172a;
-  font-size: 1.15rem;
+  color: #0d1b2a;
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
-.booking-id .hash {
-  color: #94a3b8;
-  font-weight: 500;
+.hash {
+  color: #d4a017;
+  font-weight: 800;
+  margin-right: 1px;
 }
 
+/* ----- Status badge ----- */
 .status-badge {
-  padding: 0.4rem 0.85rem;
-  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.375rem;
+  letter-spacing: 0.04em;
 }
 
 .status-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background-color: currentColor;
+  flex-shrink: 0;
 }
 
 .status-badge.status-pending {
-  background-color: #fef9c3;
-  color: #a16207;
-  border: 1px solid #fef08a;
+  background-color: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
 }
 
-.status-badge.status-confirmed, .status-badge.status-completed {
+.status-badge.status-confirmed {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.status-badge.status-completed {
   background-color: #dcfce7;
-  color: #15803d;
+  color: #166534;
   border: 1px solid #bbf7d0;
 }
 
-.status-badge.status-cancelled, .status-badge.status-canceled, .status-badge.status-rejected {
-  background-color: #fee2e2;
-  color: #b91c1c;
+.status-badge.status-rejected {
+  background-color: #fef2f2;
+  color: #991b1b;
   border: 1px solid #fecaca;
 }
 
-.card-body {
-  padding: 1.5rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
+.status-badge.status-cancelled,
+.status-badge.status-canceled {
+  background-color: #f4f3f0;
+  color: #6b6560;
+  border: 1px solid #e8e5df;
 }
 
+/* ----- Card body ----- */
+.card-body {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  flex: 1;
+}
+
+/* ----- Info rows ----- */
 .info-row {
   display: flex;
-  align-items: flex-start;
-  gap: 1.125rem;
+  align-items: center;
+  gap: 0.875rem;
 }
 
 .icon-wrapper {
-  color: #6366f1;
-  background: #e0e7ff;
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #f4f3f0;
+  color: #6b6560;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  transition: all 0.3s ease;
-}
-
-.booking-card:hover .icon-wrapper {
-  background: #6366f1;
-  color: #ffffff;
 }
 
 .icon-wrapper.price-icon {
-  color: #10b981;
-  background: #d1fae5;
-}
-.booking-card:hover .icon-wrapper.price-icon {
-  background: #10b981;
-  color: #ffffff;
+  background: #fdf3dc;
+  color: #d4a017;
 }
 
 .icon-wrapper.note-icon {
-  color: #f59e0b;
-  background: #fef3c7;
-}
-.booking-card:hover .icon-wrapper.note-icon {
-  background: #f59e0b;
-  color: #ffffff;
+  background: #f0f9ff;
+  color: #0ea5e9;
 }
 
 .info-content {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  margin-top: 0.125rem;
+  gap: 2px;
 }
 
 .info-label {
   font-size: 0.75rem;
-  color: #64748b;
+  font-weight: 500;
+  color: #9d9992;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  font-weight: 700;
+  letter-spacing: 0.04em;
 }
 
 .info-value {
-  color: #1e293b;
+  font-size: 0.9rem;
   font-weight: 600;
-  font-size: 1rem;
-  line-height: 1.4;
+  color: #1a1a1a;
 }
 
 .info-value.price {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  color: #0f172a;
+  color: #d4a017;
 }
 
 .info-value.note-text {
+  color: #6b6560;
+  font-style: italic;
   font-weight: 400;
-  color: #475569;
-  font-size: 0.95rem;
 }
 
+/* ----- Card footer ----- */
 .card-footer {
-  padding: 1.25rem 1.5rem;
-  border-top: 1px solid #f1f5f9;
-  background: rgba(248, 250, 252, 0.7);
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #f4f3f0;
+  background: #fafafa;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  min-height: 4.5rem;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
+/* ----- Status message ----- */
 .status-msg {
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
-.msg-pending { color: #d97706; }
-.msg-confirmed { color: #059669; }
-.msg-completed { color: #6366f1; }
-.msg-rejected { color: #dc2626; }
-.msg-cancelled { color: #94a3b8; }
+.msg-pending   { color: #d97706; }
+.msg-confirmed { color: #1d4ed8; }
+.msg-completed { color: #16a34a; }
+.msg-rejected  { color: #dc2626; }
+.msg-cancelled { color: #6b6560; }
 
+/* ----- Action buttons ----- */
 .action-buttons {
   display: flex;
   gap: 0.625rem;
   align-items: center;
 }
 
-.btn-reject {
-  background: #fff1f2;
-  border: 1px solid #fecdd3;
-  color: #e11d48;
-  padding: 0.6rem 1.125rem;
-  border-radius: 10px;
-  font-size: 0.875rem;
+/* Shared button base */
+.btn-confirm,
+.btn-reject,
+.btn-cancel,
+.btn-complete {
+  padding: 0.5rem 1rem;
+  border-radius: 7px;
+  font-size: 0.85rem;
   font-weight: 700;
+  border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-reject:hover {
-  background: #ffe4e6;
-  border-color: #fda4af;
-  color: #be123c;
-  box-shadow: 0 4px 6px -1px rgba(225, 29, 72, 0.15);
-}
-
-.btn-reject:active {
-  transform: translateY(1px);
-}
-
-.btn-cancel {
-  background: white;
-  border: 1px solid #e2e8f0;
-  color: #ef4444;
-  padding: 0.6rem 1.125rem;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-}
-
-.btn-cancel:hover {
-  background: #fef2f2;
-  border-color: #fecaca;
-  color: #dc2626;
-  box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1);
-}
-
-.btn-cancel:active {
-  transform: translateY(1px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 180ms ease, color 180ms ease, box-shadow 180ms ease;
 }
 
 .btn-confirm {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-  border: none;
+  background: #0d1b2a;
   color: #ffffff;
-  padding: 0.6rem 1.125rem;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.3);
+  border: none;
 }
 
 .btn-confirm:hover {
-  box-shadow: 0 6px 12px rgba(79, 70, 229, 0.35);
-  transform: translateY(-1px);
+  background: #1e2d40;
 }
 
-.btn-confirm:active {
-  transform: translateY(1px);
+.btn-reject {
+  background: #ffffff;
+  color: #dc2626;
+  border: 1.5px solid #fecaca;
+}
+
+.btn-reject:hover {
+  background: #fef2f2;
+}
+
+.btn-cancel {
+  background: #ffffff;
+  color: #6b6560;
+  border: 1.5px solid #e8e5df;
+}
+
+.btn-cancel:hover {
+  background: #f4f3f0;
 }
 
 .btn-complete {
-  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  background: #d4a017;
+  color: #0d1b2a;
   border: none;
-  color: #ffffff;
-  padding: 0.6rem 1.125rem;
-  border-radius: 10px;
-  font-size: 0.875rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(5, 150, 105, 0.3);
 }
 
 .btn-complete:hover {
-  box-shadow: 0 6px 12px rgba(5, 150, 105, 0.35);
-  transform: translateY(-1px);
-}
-
-.btn-complete:active {
-  transform: translateY(1px);
+  background: #b8870e;
 }
