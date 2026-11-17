@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   FormControl,
   FormGroup,
@@ -11,6 +11,7 @@ import {
   ProviderServices,
   CreateProviderServiceDTO
 } from '../../../services/provider_services/provider-services';
+import { CategoryService, CategoryItem } from '../../../services/category/category';
 
 @Component({
   selector: 'app-create-service',
@@ -18,11 +19,13 @@ import {
   templateUrl: './create-service.html',
   styleUrl: './create-service.css'
 })
-export class CreateService {
+export class CreateService implements OnInit {
 
   private providerServices = inject(ProviderServices);
+  private categoryService = inject(CategoryService);
   private router = inject(Router);
 
+  categories = signal<CategoryItem[]>([]);
   loading = false;
   errorMessage = '';
 
@@ -35,7 +38,13 @@ export class CreateService {
       ]
     }),
 
+    categoryId: new FormControl<number | null>(null),
+
     description: new FormControl('', {
+      nonNullable: true
+    }),
+
+    imageUrl: new FormControl('', {
       nonNullable: true
     }),
 
@@ -47,7 +56,7 @@ export class CreateService {
       ]
     }),
 
-    durationMinutes: new FormControl(30, {
+    durationMinutes: new FormControl(60, {
       nonNullable: true,
       validators: [
         Validators.required,
@@ -55,6 +64,20 @@ export class CreateService {
       ]
     })
   });
+
+  ngOnInit(): void {
+    this.categoryService.getCategories(true).subscribe({
+      next: (cats) => {
+        this.categories.set(cats);
+        if (cats.length > 0) {
+          this.serviceForm.patchValue({ categoryId: cats[0].id });
+        }
+      },
+      error: (err) => {
+        console.warn('Could not load categories:', err);
+      }
+    });
+  }
 
   createService() {
     if (this.serviceForm.invalid) {
@@ -69,7 +92,9 @@ export class CreateService {
       name: this.serviceForm.value.name!,
       description: this.serviceForm.value.description!,
       price: this.serviceForm.value.price!,
-      durationMinutes: this.serviceForm.value.durationMinutes!
+      durationMinutes: this.serviceForm.value.durationMinutes!,
+      categoryId: this.serviceForm.value.categoryId || undefined,
+      imageUrl: this.serviceForm.value.imageUrl || undefined
     };
 
     this.providerServices.createProviderService(newService).subscribe({
@@ -81,7 +106,7 @@ export class CreateService {
       error: (error) => {
         this.loading = false;
         console.error('Error creating service:', error);
-        this.errorMessage = 'Lỗi khi tạo dịch vụ. Vui lòng thử lại.';
+        this.errorMessage = error.error?.message || error.error || 'Có lỗi xảy ra khi tạo dịch vụ. Vui lòng thử lại.';
       }
     });
   }
