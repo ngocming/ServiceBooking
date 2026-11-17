@@ -26,4 +26,10 @@ public class Provider
 
     public ICollection<ProviderService> ProviderServices { get; set; }
         = new List<ProviderService>();
+
+    public ICollection<ProviderAvailability> Availabilities { get; set; }
+        = new List<ProviderAvailability>();
+
+    public ICollection<AvailabilityException> AvailabilityExceptions { get; set; }
+        = new List<AvailabilityException>();
 }

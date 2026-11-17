@@ -9,10 +9,12 @@ namespace ServiceBooking.Api.Services.Implementations;
 public class BookingService : IBookingService
 {
     private readonly AppDbContext _dbContext;
+    private readonly IAvailabilityService _availabilityService;
 
-    public BookingService(AppDbContext dbContext)
+    public BookingService(AppDbContext dbContext, IAvailabilityService? availabilityService = null)
     {
         _dbContext = dbContext;
+        _availabilityService = availabilityService ?? new AvailabilityService(dbContext);
     }
 
     public async Task<BookingResponseDto> CreateAsync(
@@ -54,6 +56,12 @@ public class BookingService : IBookingService
         var durationMinutes = providerService.DurationMinutes > 0 ? providerService.DurationMinutes : 60;
         var newStart = dto.BookingDate;
         var newEnd = newStart.AddMinutes(durationMinutes);
+
+        var isWorkingHours = await _availabilityService.IsSlotAvailableAsync(providerService.ProviderId, newStart, newEnd);
+        if (!isWorkingHours)
+        {
+            throw new InvalidOperationException("The provider is not available during the requested time slot according to their schedule.");
+        }
 
         // Fetch non-cancelled, non-rejected bookings for the same provider within a +/- 24h window
         var relevantBookings = await _dbContext.Bookings

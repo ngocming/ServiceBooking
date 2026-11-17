@@ -15,6 +15,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Booking> Bookings { get; set; }
     public DbSet<BookingStatusHistory> BookingStatusHistories { get; set; }
+    public DbSet<ProviderAvailability> ProviderAvailabilities { get; set; }
+    public DbSet<AvailabilityException> AvailabilityExceptions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -82,5 +84,17 @@ public class AppDbContext : DbContext
             .WithMany()
             .HasForeignKey(h => h.ChangedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<ProviderAvailability>()
+            .HasOne(pa => pa.Provider)
+            .WithMany(p => p.Availabilities)
+            .HasForeignKey(pa => pa.ProviderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AvailabilityException>()
+            .HasOne(ae => ae.Provider)
+            .WithMany(p => p.AvailabilityExceptions)
+            .HasForeignKey(ae => ae.ProviderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

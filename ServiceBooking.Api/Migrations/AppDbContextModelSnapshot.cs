@@ -22,6 +22,39 @@ namespace ServiceBooking.Api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ServiceBooking.Api.Models.AvailabilityException", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<TimeSpan?>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProviderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan?>("StartTime")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("AvailabilityExceptions");
+                });
+
             modelBuilder.Entity("ServiceBooking.Api.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
@@ -179,6 +212,36 @@ namespace ServiceBooking.Api.Migrations
                     b.ToTable("Providers");
                 });
 
+            modelBuilder.Entity("ServiceBooking.Api.Models.ProviderAvailability", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
+
+                    b.Property<bool>("IsAvailable")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProviderId")
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProviderId");
+
+                    b.ToTable("ProviderAvailabilities");
+                });
+
             modelBuilder.Entity("ServiceBooking.Api.Models.ProviderService", b =>
                 {
                     b.Property<int>("Id")
@@ -269,6 +332,17 @@ namespace ServiceBooking.Api.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ServiceBooking.Api.Models.AvailabilityException", b =>
+                {
+                    b.HasOne("ServiceBooking.Api.Models.Provider", "Provider")
+                        .WithMany("AvailabilityExceptions")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
+                });
+
             modelBuilder.Entity("ServiceBooking.Api.Models.Booking", b =>
                 {
                     b.HasOne("ServiceBooking.Api.Models.Customer", "Customer")
@@ -337,6 +411,17 @@ namespace ServiceBooking.Api.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ServiceBooking.Api.Models.ProviderAvailability", b =>
+                {
+                    b.HasOne("ServiceBooking.Api.Models.Provider", "Provider")
+                        .WithMany("Availabilities")
+                        .HasForeignKey("ProviderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Provider");
+                });
+
             modelBuilder.Entity("ServiceBooking.Api.Models.ProviderService", b =>
                 {
                     b.HasOne("ServiceBooking.Api.Models.Provider", "Provider")
@@ -355,6 +440,10 @@ namespace ServiceBooking.Api.Migrations
 
             modelBuilder.Entity("ServiceBooking.Api.Models.Provider", b =>
                 {
+                    b.Navigation("Availabilities");
+
+                    b.Navigation("AvailabilityExceptions");
+
                     b.Navigation("ProviderServices");
                 });
 

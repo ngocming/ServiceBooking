@@ -48,6 +48,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IProviderServiceOfferingService, ProviderServiceOfferingService>();
 builder.Services.AddScoped<IBookingService, BookingService>();
+builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
 
 var jwtSettings = builder.Configuration.GetSection("JWT");
 builder.Services.AddAuthentication(options =>

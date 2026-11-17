@@ -362,4 +362,36 @@ public class BookingServiceTests
         Assert.Equal("Service delivered successfully", history[2].Reason);
         Assert.Equal(2, history[2].ChangedByUserId);
     }
+
+    [Fact]
+    public async Task CreateAsync_OutsideProviderWorkingHours_ThrowsInvalidOperationException()
+    {
+        var (db, customer, provider, service) = SetupBaseData(nameof(CreateAsync_OutsideProviderWorkingHours_ThrowsInvalidOperationException));
+        var bookingService = new BookingService(db);
+
+        // Provider only works Monday 09:00 - 17:00
+        var nextMonday = DateTime.UtcNow.Date.AddDays(((int)DayOfWeek.Monday - (int)DateTime.UtcNow.DayOfWeek + 7) % 7);
+        if (nextMonday <= DateTime.UtcNow) nextMonday = nextMonday.AddDays(7);
+
+        db.ProviderAvailabilities.Add(new ProviderAvailability
+        {
+            ProviderId = provider.Id,
+            DayOfWeek = DayOfWeek.Monday,
+            StartTime = new TimeSpan(9, 0, 0),
+            EndTime = new TimeSpan(17, 0, 0),
+            IsAvailable = true
+        });
+        await db.SaveChangesAsync();
+
+        // Customer attempts to book at 20:00 (outside working hours)
+        var dto = new CreateBookingDto
+        {
+            ProviderServiceId = service.Id,
+            BookingDate = nextMonday.AddHours(20),
+            Note = "Late night request"
+        };
+
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => bookingService.CreateAsync(userId: 1, dto));
+        Assert.Contains("schedule", ex.Message, StringComparison.OrdinalIgnoreCase);
+    }
 }
