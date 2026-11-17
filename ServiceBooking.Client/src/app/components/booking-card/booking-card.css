@@ -258,3 +258,99 @@
 .btn-complete:hover {
   background: #b8870e;
 }
+
+/* History Timeline */
+.history-toggle-row {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--clr-border, #e8e5df);
+}
+
+.btn-toggle-history {
+  background: none;
+  border: none;
+  color: #d4a017;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  padding: 0;
+  transition: color 150ms ease;
+}
+
+.btn-toggle-history:hover {
+  color: #b8880f;
+  text-decoration: underline;
+}
+
+.history-timeline {
+  margin-top: 0.75rem;
+  background: #f8f7f5;
+  border-radius: 10px;
+  padding: 0.875rem 1rem;
+  border: 1px solid #e8e5df;
+}
+
+.history-loading,
+.history-empty {
+  font-size: 0.8rem;
+  color: #9d9992;
+  font-style: italic;
+}
+
+.timeline-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 0.625rem;
+  position: relative;
+}
+
+.timeline-marker {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d4a017;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.timeline-status {
+  font-weight: 700;
+  color: #0d1b2a;
+}
+
+.timeline-time {
+  font-size: 0.75rem;
+  color: #9d9992;
+}
+
+.timeline-reason {
+  font-size: 0.78rem;
+  color: #3d3b38;
+}
+
+.timeline-by {
+  font-size: 0.72rem;
+  color: #9d9992;
+}
