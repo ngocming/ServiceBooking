@@ -19,7 +19,7 @@ export class Login {
   errorMessage = '';
 
   loginForm = new FormGroup({
-    email: new FormControl('', [Validators.required, Validators.email]),
+    email: new FormControl('', [Validators.required]),
     password: new FormControl('', Validators.required),
     rememberMe: new FormControl(false),
   });
