@@ -235,8 +235,16 @@
         Trước
       </button>
 
-      <div class="pagination-info">
-        <span>Trang <strong>{{ pageIndex() }}</strong> / <strong>{{ totalPages() }}</strong></span>
+      <div class="pagination-pages">
+        @for (p of pagesArray(); track p) {
+          <button 
+            type="button"
+            class="pagination-num" 
+            [class.active]="p === pageIndex()"
+            (click)="goToPage(p)">
+            {{ p }}
+          </button>
+        }
       </div>
 
       <button 

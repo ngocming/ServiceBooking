@@ -25,6 +25,7 @@ export interface ServiceFilter {
   maxPrice?: number;
   sortBy?: string;
   sortDescending?: boolean;
+  pageNumber?: number;
   pageIndex?: number;
   pageSize?: number;
 }
@@ -32,7 +33,8 @@ export interface ServiceFilter {
 export interface PagedResult<T> {
   items: T[];
   totalCount: number;
-  pageIndex: number;
+  pageNumber: number;
+  pageIndex?: number;
   pageSize: number;
   totalPages: number;
   hasPreviousPage: boolean;
@@ -64,7 +66,11 @@ export class ProviderServices {
       if (filter.maxPrice != null) params = params.set('maxPrice', filter.maxPrice.toString());
       if (filter.sortBy) params = params.set('sortBy', filter.sortBy);
       if (filter.sortDescending != null) params = params.set('sortDescending', filter.sortDescending.toString());
-      if (filter.pageIndex != null) params = params.set('pageIndex', filter.pageIndex.toString());
+      const page = filter.pageNumber ?? filter.pageIndex;
+      if (page != null) {
+        params = params.set('pageNumber', page.toString());
+        params = params.set('pageIndex', page.toString());
+      }
       if (filter.pageSize != null) params = params.set('pageSize', filter.pageSize.toString());
     }
     return this.http.get<PagedResult<ProviderServiceItem>>(this.baseUrl, { params });

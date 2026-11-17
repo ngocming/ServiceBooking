@@ -18,5 +18,15 @@ public class ServiceFilterDto
 
     public int PageNumber { get; set; } = 1;
 
+    public int? PageIndex
+    {
+        get => PageNumber;
+        set
+        {
+            if (value.HasValue && value.Value > 0)
+                PageNumber = value.Value;
+        }
+    }
+
     public int PageSize { get; set; } = 10;
 }

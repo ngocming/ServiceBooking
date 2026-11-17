@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
@@ -34,6 +34,16 @@ export class Services implements OnInit {
   totalPages = signal(1);
   hasPreviousPage = signal(false);
   hasNextPage = signal(false);
+
+  pagesArray = computed(() => {
+    const total = this.totalPages();
+    const current = this.pageIndex();
+    const pages: number[] = [];
+    for (let i = 1; i <= total; i++) {
+      pages.push(i);
+    }
+    return pages;
+  });
 
   userRole = '';
 
@@ -120,7 +130,8 @@ export class Services implements OnInit {
       next: (result) => {
         this.services.set(result.items);
         this.totalCount.set(result.totalCount);
-        this.pageIndex.set(result.pageIndex);
+        const resolvedPage = result.pageNumber ?? result.pageIndex ?? 1;
+        this.pageIndex.set(resolvedPage);
         this.totalPages.set(result.totalPages);
         this.hasPreviousPage.set(result.hasPreviousPage);
         this.hasNextPage.set(result.hasNextPage);
